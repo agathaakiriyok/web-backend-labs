@@ -1,0 +1,64 @@
+.feedback {
+    padding: 40px 0;
+}
+
+.feedback__title {
+    margin-bottom: 25px;
+    color: #165E55;
+}
+
+.feedback__form {
+    width: 60%;
+    margin: 0 auto 30px auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border: 2px solid #165E55;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.feedback__list {
+    width: 70%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.feedback__item {
+    background-color: #F7F1E1;
+    border: 2px solid #165E55;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.feedback__name {
+    font-weight: bold;
+    text-align: left;
+}
+
+.feedback__email {
+    font-style: italic;
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.feedback__text {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.feedback__edit-btn {
+    padding: 5px 12px;
+    background-color: #165E55;
+    color: #F7F1E1;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.feedback__edit-btn:hover {
+    background-color: #0f4039;
+}

@@ -1,0 +1,977 @@
+@import url('https://fonts.googleapis.com/css2?family=Forum&family=Roboto:wght@300;400;500&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #F7F1E1;
+    color: #165E55;
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    letter-spacing: 0.3px;
+}
+ 
+
+h1, h2, h3, h4, h5 {
+    font-family: 'Forum', serif;
+    color: #165E55;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+h1 {
+    font-size: 2.5rem;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+h3 {
+    font-size: 1.75rem;
+}
+
+h4 {
+    font-size: 1.5rem;
+}
+
+h5 {
+    font-size: 1.25rem;
+}
+
+p {
+    text-align: center;
+    font-size: 1rem;
+} 
+
+.wrapper {
+    max-width: 1200px;
+    margin: auto;
+}
+
+.header {
+    background-color: #F7F1E1;
+    padding: 15px 0 17px 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.header__wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+
+.logo img {
+    width: 50px;   
+    height: auto;  
+}
+
+.nav__list {
+    display: flex;
+} 
+
+.nav__item {
+    list-style: none;
+    padding: 0 10px;
+    margin: 0 15px;
+}
+
+.nav__link {
+    text-decoration: none;
+    color: #165E55;
+    font-weight: 500;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    transition: color 0.3s;
+}
+
+.nav__btn {
+    background-color: #165E55;
+    color: #F7F1E1;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.nav__btn:hover {
+    background-color: #0f4039;
+}
+
+.nav__link:hover {
+    color: #C2E5DD;
+    transform: scale(1.08);
+}
+
+.nav a.active {
+    font-weight: 700;
+    border-bottom: 2px solid #165E55;
+    color: #165E55;
+}
+
+.welcome {
+    padding: 40px 20px;
+    background-color: #F7F1E1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); 
+
+}
+
+.welcome__wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+   
+}
+
+.welcome__content {
+    display: flex;
+    flex-direction: column; 
+    max-width: 500px; 
+}
+
+.welcome__title {
+    margin-bottom: 15px; 
+}
+
+.welcome__subtitle {
+    font-size: 1.3rem;
+    margin-top: 0; 
+}
+
+.welcome__img {
+    width: 600px;
+    height: 450px;
+}
+
+.welcome__img img {
+    max-width: 100%; 
+    max-height: 100%;    
+}
+
+.gallery {
+    background-color: #165E55;
+    padding: 40px 0;
+}
+
+.gallery__title {
+    color: #F7F1E1;
+    margin-bottom: 20px;
+}
+
+.gallery__slider {
+    position: relative;
+    width: 80%;
+    margin: 0 auto;
+    padding: 10px;
+    border: 2px solid #165E55;
+    border-radius: 10px;
+    background-color: #F7F1E1;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.slider__track {
+    display: flex;
+    overflow-x: auto; 
+    gap: 20px;
+    padding: 10px;
+}
+
+.slider__item {
+    flex: 0 0 auto;
+    text-align: center;
+}
+
+.slider__item img {
+    border-radius: 8px;
+    border: 2px solid #165E55;
+    width: 230px;
+    height: 300px;
+    transition: transform 0.3s;
+}
+
+.slider__item img:hover {
+    transform: scale(1.05);
+}
+
+.slider__caption {
+    margin-top: 10px;
+    text-align: center;
+    font-style: italic;
+}
+
+.slider__btn {
+    background-color: #F7F1E1;
+    color: #165E55;
+    border: 2px solid #165E55;
+    padding: 8px 12px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+}
+
+.slider__btn--prev { left: -50px; }
+.slider__btn--next { right: -50px; }
+
+.slider__btn:hover {
+    background-color: #0f4039;
+    color: #F7F1E1;
+}
+
+.exhibitions {
+    padding: 40px 0;
+    background-color: #F7F1E1;
+    border-top: 2px solid #165E55;
+}
+
+.exhibitions__list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+
+.exhibitions__item {
+    background-color: #F7F1E1;
+    border: 2px solid #165E55;
+    border-radius: 10px;
+    padding: 15px;
+    width: 220px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.exhibitions__btn,
+.exhibitions__show-more {
+    display: block;
+    margin: 10px auto 0;
+    padding: 8px 15px;
+    border: none;
+    background-color: #165E55;
+    color: #F7F1E1;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 500;
+    transition: background-color 0.3s;
+    text-align: center;
+}
+
+.exhibitions__btn:hover,
+.exhibitions__show-more:hover {
+    background-color: #0f4039;
+}
+
+.contacts {
+    padding: 40px 0;
+    background-color: #F7F1E1;
+    border-top: 2px solid #165E55;
+}
+
+.contacts__form {
+    width: 60%;
+    margin: 0 auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border: 2px solid #165E55;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.contacts__label {
+    display: block;
+    margin: 10px 0;
+    color: #165E55;
+    font-weight: 500;
+}
+
+.contacts__label input,
+.contacts__label textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #165E55;
+    border-radius: 5px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.contacts__btn {
+    display: block;
+    margin: 15px auto 0;
+    background-color: #165E55;
+    color: #F7F1E1;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.schedule .wrapper {
+    overflow-x: auto;
+}
+
+.schedule__table {
+    min-width: 500px; 
+} 
+
+.contacts__btn:hover {
+    background-color: #0f4039;
+}
+
+.schedule__table {
+    width: 100%;
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr; 
+    border: 2px solid #165E55;
+}
+
+.schedule__table thead,
+.schedule__table tbody,
+.schedule__table tr {
+    display: contents;
+}
+
+.schedule__table th,
+.schedule__table td {
+    padding: 10px;
+    border-bottom: 1px solid #165E55;
+    text-align: center;
+}
+
+.schedule__caption th {
+    grid-column: 1 / -1;
+    background-color: #165E55;
+    color: #F7F1E1;
+    font-size: 1.2em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid #165E55;
+}
+
+.column-headers {
+    background-color: #E9F2EF;
+    color: #165E55;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.schedule__table tbody tr:nth-child(odd) td {
+    background-color: #98a8a6;
+}
+
+.schedule__table tbody tr:nth-child(even) td {
+    background-color: #E9F2EF;
+}
+
+.users {
+    padding: 40px 0;
+    background-color: #F7F1E1;
+    border-top: 2px solid #165E55;
+}
+
+.users__btn {
+    display: block;
+    margin: 0 auto 20px;
+    padding: 10px 20px;
+    background-color: #165E55;
+    color: #F7F1E1;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.users__btn:hover {
+    background-color: #0f4039;
+}
+
+.users__status {
+    text-align: center;
+    margin-bottom: 20px;
+    font-style: italic;
+}
+
+.users__list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.users__item {
+    width: 220px;
+    padding: 15px;
+    border: 2px solid #165E55;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.users__name {
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+}
+
+.users__email,
+.users__city {
+    font-size: 0.95rem;
+}
+
+.users__loader {
+    width: 60px;
+    height: 60px;
+    margin: 20px auto;
+    border: 6px solid #C2E5DD;
+    border-top: 6px solid #165E55;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.users__loader--hidden {
+    display: none;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.users__list--hidden {
+    display: none;
+}
+
+.users__error {
+    text-align: center;
+    font-style: italic;
+    color: #8b0000;
+}
+
+.users__error--hidden {
+    display: none;
+}
+
+
+.footer {
+    background-color: #165E55;
+    color: #F7F1E1;
+    text-align: center;
+    padding: 20px 0;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+.exhibitions-page__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.exhibitions-page__item {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 40px;
+    padding: 25px;
+    background-color: #F7F1E1;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.exhibition__image {
+    flex: 0 0 300px;
+}
+
+.exhibition__image img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #165E55;
+}
+
+.exhibition__content {
+    display: flex;
+    flex-direction: column;
+}
+
+.exhibitions-page__name {
+    font-family: 'Forum', serif;
+    color: #165E55;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    text-align: left;
+}
+
+.exhibitions-page__description {
+    display: flex;
+    text-align: left;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    color: #165E55;
+}
+
+
+
+.exhibitions-page__date {
+    text-align: left;
+    font-weight: bold;
+    color: #165E55;
+    margin-bottom: 20px;
+    font-style: italic;
+}
+
+.exhibitions__btn {
+    background-color: #165E55;
+    color: #F7F1E1;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    align-self: flex-start;
+}
+
+.exhibitions__btn:hover {
+    background-color: #0f4039;
+}
+
+.tickets {
+    padding: 40px 0;
+    background-color: #F7F1E1;
+    border-top: 2px solid #165E55;
+}
+
+.tickets__form {
+    width: 60%;
+    margin: 0 auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border: 2px solid #165E55;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.tickets__label {
+    display: block;
+    margin: 10px 0;
+    color: #165E55;
+    font-weight: 500;
+}
+
+.tickets__label input,
+.tickets__label textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #165E55;
+    border-radius: 5px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.tickets__btn {
+    display: block;
+    margin: 15px auto 0;
+    background-color: #165E55;
+    color: #F7F1E1;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+
+.modal {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal--hidden {
+    display: none;
+}
+
+.modal__content {
+    background-color: #F7F1E1;
+    border-radius: 10px;
+    padding: 30px;
+    max-width: 90%;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
+.modal__close {
+    display: flex;
+    justify-content: flex-end;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: #165E55;
+}
+
+.modal__body {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.modal__image img {
+    max-width: 400px; 
+    border-radius: 10px;
+    border: 2px solid #165E55;
+}
+
+.modal__title {
+    font-family: 'Forum', serif;
+    color: #165E55;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.modal__label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-weight: 500;
+}
+
+.modal__label input {
+    padding: 10px;
+    border: 2px solid #165E55;
+    border-radius: 5px;
+    background-color: white;
+    font-size: 1rem;
+}
+
+.modal__submit {
+    background-color: #165E55;
+    color: #F7F1E1;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+
+.modal__submit:hover {
+    background-color: #0f4039;
+}
+
+
+
+@media (max-width: 420px) {
+    body {
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+
+    .wrapper {
+        max-width: 300px;
+        margin: auto;
+    }
+
+    .header__wrapper {
+       justify-content: space-around;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .nav__list {
+        flex-direction: column;
+        align-items: center;
+        gap: 7px;
+    }
+
+    .nav__link {
+        font-size: 0.7rem;
+    }
+
+    .logo img {
+        width: 40px;
+    }
+
+    .welcome {
+        padding: 25px 10px;
+    }
+
+    .welcome__title {
+        font-size: 1.6rem;
+        margin-bottom: 10px;
+    }
+
+    .welcome__subtitle {
+        font-size: 1rem;
+    }
+
+    .exhibitions-page__title {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+
+    .exhibitions-page__item {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .exhibition__image img {
+        width: 90%;
+        height: auto;
+        border-radius: 10px;
+    }
+
+    .exhibitions-page__name {
+        font-size: 1.2rem;
+    }
+
+    .exhibitions-page__description {
+        flex-direction: column;
+        font-size: 0.9rem;
+        line-height: 1.4;
+        text-align: justify;
+    }
+
+    .exhibitions-page__date {
+        font-size: 0.85rem;
+    }
+
+    .exhibitions__btn {
+        width: 100%;
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+
+    .gallery__slider {
+        width: 100%;
+        padding: 5px;
+    }
+
+    .slider__item img {
+        width: 180px;
+        height: 240px;
+    }
+
+    .slider__caption {
+        font-size: 0.9rem;
+    }
+
+    .slider__btn {
+        display: none; 
+    }
+
+    .exhibitions__list {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .exhibitions__item {
+        width: 90%;
+        padding: 10px;
+    }
+
+    .exhibitions__name {
+        font-size: 1.2rem;
+    }
+
+    .contacts__form {
+        width: 90%;
+        padding: 15px;
+    }
+
+    .contacts__title {
+        font-size: 1.5rem;
+    }
+
+    .contacts__label {
+        font-size: 0.9rem;
+    }
+
+    .contacts__label input,
+    .contacts__label textarea {
+    width: 90%;
+    }
+
+    .contacts__btn {
+        width: 100%;
+        font-size: 1rem;
+        padding: 10px;
+    }
+
+    .footer {
+        font-size: 0.8rem;
+        padding: 15px 0;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .wrapper {
+        max-width: 500px;
+        margin: auto;
+    }
+
+     .header__wrapper {
+       justify-content: space-around;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .nav__list {
+        flex-direction: column;
+        align-items: center;
+        gap: 7px;
+    }
+
+    .nav__link {
+        font-size: 0.7rem;
+    }
+
+
+    .welcome__wrapper {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .welcome__img {
+        display: none;
+    }
+
+    .exhibitions__list {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+   
+    .exhibitions-page__description {
+        flex-direction: column;
+        font-size: 1rem;
+        max-width: 90%;
+        margin: 0 auto;
+    }
+
+    .gallery__slider {
+        width: 95%;
+    }
+
+    .slider__btn {
+        display: none; 
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1023px) {
+    .welcome__img { 
+        width: 400px; 
+        height: 300px;
+    }
+
+    .exhibition__image img {
+        width: 350px;
+        height: auto;
+    }
+
+     .exhibitions-page__description {
+        font-size: 1rem;
+    }
+}
+
+@media (min-width: 1024px) and (max-width: 1920px) {
+    .wrapper {
+        max-width: 1800px;
+    }
+
+    .welcome__title {
+        font-size: 3.5rem;
+    }
+
+    .gallery__slider {
+        width: 95%;
+    }
+
+    .gallery__slider img {
+        width: 300px;
+        height: 400px;
+    }
+
+    .exhibitions-page__name {
+        font-size: 2rem;
+    }
+
+    .exhibitions-page__description {
+        font-size: 1.3rem;
+        line-height: 1.6;
+    }
+}
+
+
+@media (min-width: 2560px) {
+    .wrapper {
+        max-width: 1800px;
+    }
+
+    .welcome__title {
+        font-size: 3.5rem;
+    }
+
+     .gallery__slider {
+        width: 95%;
+    }
+
+    .gallery__slider img {
+        width: 300px;
+        height: 400px;
+    }
+}
+
+@media (min-width: 2560px) and (max-width: 3440px) {
+
+    .wrapper { 
+        max-width: 2000px; 
+    }
+    
+    .welcome__title {
+        font-size: 4rem;
+    }
+    
+    .welcome__subtitle {
+        font-size: 1.5rem;
+    }
+    
+    .gallery__slider {
+        width: 90%;
+    }
+    
+    .gallery__slider img {
+        width: 350px;
+        height: 450px;
+    }   
+
+    .exhibitions-page__description {
+        font-size: 1.4rem;
+        max-width: 1200px;
+    }
+}
+
