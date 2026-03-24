@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>{{> head}}<title>Выставки</title></head>
+<body>
+{{> header}}
+<main class="main">
+  <section class="exhibitions-page">
+    <h1>Выставки</h1>
+    <a href="/exhibitions/add"><button class="nav__btn">+ Добавить</button></a>
+    <ul class="exhibitions-page__list" style="margin-top:20px">
+      {{#each exhibitions}}
+      <li class="exhibitions-page__item">
+        <div class="exhibition__content">
+          <h3 class="exhibitions-page__name">{{name}}</h3>
+          <p class="exhibitions-page__description">{{description}}</p>
+          <p class="exhibitions-page__date">{{dateStart}} — {{dateEnd}}</p>
+          <a href="/exhibitions/{{id}}"><button class="nav__btn">Подробнее</button></a>
+          <a href="/exhibitions/{{id}}/edit"><button class="nav__btn">Редактировать</button></a>
+          <form action="/exhibitions/{{id}}/delete" method="POST" style="display:inline">
+            <button class="nav__btn" style="background:#993c1d">Удалить</button>
+          </form>
+        </div>
+      </li>
+      {{/each}}
+    </ul>
+  </section>
+</main>
+{{> footer}}
+<script src="/js/sse.js"></script>
+</body>
+</html>

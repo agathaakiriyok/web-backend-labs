@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>{{> head}}<title>Добавить зал</title></head>
+<body>
+{{> header}}
+<main class="main">
+  <section class="tickets">
+    <div class="wrapper">
+      <h1>Новый зал</h1>
+      <form class="tickets__form" action="/halls" method="POST">
+        <label class="tickets__label">Название: <input type="text" name="name" required></label>
+        <label class="tickets__label">Вместимость: <input type="number" name="capacity" required></label>
+        <button class="tickets__btn">Сохранить</button>
+      </form>
+    </div>
+  </section>
+</main>
+{{> footer}}
+</body>
+</html>

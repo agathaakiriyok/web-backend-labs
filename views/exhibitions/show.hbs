@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>{{> head}}<title>{{exhibition.name}}</title></head>
+<body>
+{{> header}}
+<main class="main">
+  <section class="tickets">
+    <div class="wrapper">
+      <h1>{{exhibition.name}}</h1>
+      <p>{{exhibition.description}}</p>
+      <p><strong>Зал:</strong> {{exhibition.hall.name}}</p>
+      <a href="/exhibitions"><button class="nav__btn">Назад</button></a>
+    </div>
+  </section>
+</main>
+{{> footer}}
+</body>
+</html>

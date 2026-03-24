@@ -5,10 +5,7 @@ export class AppController {
 
   private getSession(auth?: string) {
     const isAuth = auth === 'true';
-    return {
-      isAuth,
-      username: isAuth ? 'Агата' : null,
-    };
+    return { isAuth, username: isAuth ? 'Агата' : null };
   }
 
   @Get()
@@ -27,18 +24,6 @@ export class AppController {
   @Get('about')
   @Render('about')
   getAbout(@Query('auth') auth?: string) {
-    return this.getSession(auth);
-  }
-
-  @Get('tickets')
-  @Render('tickets')
-  getTickets(@Query('auth') auth?: string) {
-    return this.getSession(auth);
-  }
-
-  @Get('feedback')
-  @Render('feedback')
-  getFeedback(@Query('auth') auth?: string) {
     return this.getSession(auth);
   }
 
