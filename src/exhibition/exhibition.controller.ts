@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Param, Redirect, Render, Query, Sse } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Redirect, Render, Query, Sse, Res } from '@nestjs/common';
 import { ExhibitionService } from './exhibition.service';
 import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
+import type { Response } from 'express';
 
 const exhibitionEvents = new Subject<string>();
 
@@ -23,12 +24,14 @@ export class ExhibitionController {
   }
 
   @Sse('events')
-  events(): Observable<MessageEvent> {
+  events(@Res() res: Response): Observable<MessageEvent> {
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('X-Accel-Buffering', 'no');
     return exhibitionEvents.pipe(
-      map((data) => ({ data } as MessageEvent)),
+    map((data) => ({ data } as MessageEvent)),
     );
   }
-  
+
   @Get(':id/edit')
   @Render('exhibitions/edit')
   async editForm(@Param('id') id: string, @Query('auth') auth?: string) {
