@@ -7,21 +7,41 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
+enum OrderStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+
 model User {
-  id        Int        @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   name      String
-  email     String     @unique
+  email     String    @unique
   password  String
-  createdAt DateTime   @default(now())
-  tickets   Ticket[]
+  createdAt DateTime  @default(now())
+
+  orders    Order[]
   feedbacks Feedback[]
+
+  @@map("users")
 }
 
 model Hall {
   id          Int          @id @default(autoincrement())
   name        String
   capacity    Int
+
   exhibitions Exhibition[]
+
+  @@map("halls")
 }
 
 model Exhibition {
@@ -30,26 +50,63 @@ model Exhibition {
   description String
   dateStart   DateTime
   dateEnd     DateTime
-  hall        Hall      @relation(fields: [hallId], references: [id])
+
+  hall        Hall      @relation(fields: [hallId], references: [id], onDelete: Cascade)
   hallId      Int
+
   tickets     Ticket[]
+
+  @@map("exhibitions")
+}
+
+model Order {
+  id          Int          @id @default(autoincrement())
+  createdAt   DateTime     @default(now())
+  status      OrderStatus  @default(PENDING)
+  totalAmount Float
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int
+
+  tickets     Ticket[]
+  payments    Payment[]
+
+  @@map("orders")
 }
 
 model Ticket {
   id           Int        @id @default(autoincrement())
   type         String
   price        Float
-  purchasedAt  DateTime   @default(now())
-  user         User       @relation(fields: [userId], references: [id])
-  userId       Int
-  exhibition   Exhibition @relation(fields: [exhibitionId], references: [id])
+
+  exhibition   Exhibition @relation(fields: [exhibitionId], references: [id], onDelete: Cascade)
   exhibitionId Int
+
+  order        Order      @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId      Int
+
+  @@map("tickets")
+}
+
+model Payment {
+  id        Int           @id @default(autoincrement())
+  amount    Float
+  status    PaymentStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+
+  order     Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId   Int
+
+  @@map("payments")
 }
 
 model Feedback {
   id        Int      @id @default(autoincrement())
   text      String
   createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
+
+  @@map("feedbacks")
 }

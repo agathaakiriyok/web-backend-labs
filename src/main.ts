@@ -1,9 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { NestExpressApplication } from '@nestjs/platform-express';
+import session from 'express-session';
 import { join } from 'path';
-const hbs = require('hbs');
-const fs = require('fs');
+import { NestExpressApplication } from '@nestjs/platform-express';
+import hbs from 'hbs';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -13,14 +13,15 @@ async function bootstrap() {
   app.setViewEngine('hbs');
 
   hbs.registerPartials(join(__dirname, '..', 'views', 'partials'));
-  const partialsDir = join(__dirname, '..', 'views', 'partials');
-  fs.readdirSync(partialsDir).forEach((file: string) => {
-    const name = file.replace('.hbs', '');
-    const template = fs.readFileSync(join(partialsDir, file), 'utf8');
-    hbs.registerPartial(name, template);
-  });
 
-  const port = process.env.PORT || 3000;
-  await app.listen(port);
+  app.use(
+    session({
+      secret: 'simple-secret-key',
+      resave: false,
+      saveUninitialized: false,
+    }),
+  );
+
+  await app.listen(3000);
 }
 bootstrap();

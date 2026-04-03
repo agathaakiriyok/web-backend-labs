@@ -1,8 +1,21 @@
-import { Controller, Get, Post, Body, Param, Redirect, Render, Query, Sse, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Redirect,
+  Render,
+  Sse,
+  Res,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { ExhibitionService } from './exhibition.service';
 import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import type { Response } from 'express';
+import type { Response, Request } from 'express';
+import { AuthGuard } from '../auth/auth.guard';
 
 const exhibitionEvents = new Subject<string>();
 
@@ -12,41 +25,68 @@ export class ExhibitionController {
 
   @Get()
   @Render('exhibitions/index')
-  async findAll(@Query('auth') auth?: string) {
+  async findAll(@Req() req: Request) {
     const exhibitions = await this.exhibitionService.findAll();
-    return { exhibitions, isAuth: auth === 'true', username: 'Агата' };
+    const s = (req as any).session;
+
+    return {
+      exhibitions,
+      isAuth: !!s?.userId,
+      username: s?.username,
+    };
   }
 
   @Get('add')
+  @UseGuards(AuthGuard)
   @Render('exhibitions/add')
-  addForm(@Query('auth') auth?: string) {
-    return { isAuth: auth === 'true', username: 'Агата' };
+  addForm(@Req() req: Request) {
+    const s = (req as any).session;
+
+    return {
+      isAuth: !!s?.userId,
+      username: s?.username,
+    };
   }
 
   @Sse('events')
   events(@Res() res: Response): Observable<MessageEvent> {
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('X-Accel-Buffering', 'no');
+
     return exhibitionEvents.pipe(
-    map((data) => ({ data } as MessageEvent)),
+      map((data) => ({ data } as MessageEvent)),
     );
   }
 
   @Get(':id/edit')
+  @UseGuards(AuthGuard)
   @Render('exhibitions/edit')
-  async editForm(@Param('id') id: string, @Query('auth') auth?: string) {
+  async editForm(@Param('id') id: string, @Req() req: Request) {
     const exhibition = await this.exhibitionService.findOne(Number(id));
-    return { exhibition, isAuth: auth === 'true', username: 'Агата' };
+    const s = (req as any).session;
+
+    return {
+      exhibition,
+      isAuth: !!s?.userId,
+      username: s?.username,
+    };
   }
 
   @Get(':id')
   @Render('exhibitions/show')
-  async findOne(@Param('id') id: string, @Query('auth') auth?: string) {
+  async findOne(@Param('id') id: string, @Req() req: Request) {
     const exhibition = await this.exhibitionService.findOne(Number(id));
-    return { exhibition, isAuth: auth === 'true', username: 'Агата' };
+    const s = (req as any).session;
+
+    return {
+      exhibition,
+      isAuth: !!s?.userId,
+      username: s?.username,
+    };
   }
 
   @Post()
+  @UseGuards(AuthGuard)
   @Redirect('/exhibitions')
   async create(@Body() body: any) {
     await this.exhibitionService.create(body);
@@ -55,6 +95,7 @@ export class ExhibitionController {
   }
 
   @Post(':id/update')
+  @UseGuards(AuthGuard)
   @Redirect('/exhibitions')
   async update(@Param('id') id: string, @Body() body: any) {
     await this.exhibitionService.update(Number(id), body);
@@ -63,6 +104,7 @@ export class ExhibitionController {
   }
 
   @Post(':id/delete')
+  @UseGuards(AuthGuard)
   @Redirect('/exhibitions')
   async remove(@Param('id') id: string) {
     await this.exhibitionService.remove(Number(id));

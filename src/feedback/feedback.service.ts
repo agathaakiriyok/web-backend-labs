@@ -6,12 +6,15 @@ export class FeedbackService {
   constructor(private prisma: PrismaService) {}
 
   findAll() {
-    return this.prisma.feedback.findMany({ include: { user: true } });
+    return this.prisma.feedback.findMany({
+      include: { user: true },
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
-  create(data: { text: string; userId: number }) {
+  create(userId: number, text: string) {
     return this.prisma.feedback.create({
-      data: { text: data.text, userId: Number(data.userId) },
+      data: { userId, text },
     });
   }
 

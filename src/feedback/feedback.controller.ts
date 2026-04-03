@@ -1,39 +1,51 @@
-import { Controller, Get, Post, Body, Param, Delete, Redirect, Render, Query, Sse } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Redirect,
+  Render,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { FeedbackService } from './feedback.service';
-import { Observable, Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
-
-const feedbackEvents = new Subject<string>();
+import { AuthGuard } from '../auth/auth.guard';
+import type { Request } from 'express';
 
 @Controller('feedback')
 export class FeedbackController {
   constructor(private readonly feedbackService: FeedbackService) {}
 
-  @Sse('events')
-  events(): Observable<MessageEvent> {
-    return feedbackEvents.pipe(map((data) => ({ data } as MessageEvent)));
-  }
-
   @Get()
   @Render('feedback')
-  async findAll(@Query('auth') auth?: string) {
+  async findAll(@Req() req: Request) {
+    const s = (req as any).session;
     const feedbacks = await this.feedbackService.findAll();
-    return { feedbacks, isAuth: auth === 'true', username: 'Агата' };
+
+    return {
+      feedbacks,
+      isAuth: !!s?.userId,
+      username: s?.username,
+    };
   }
 
   @Post()
+  @UseGuards(AuthGuard)
   @Redirect('/feedback')
-  async create(@Body() body: any) {
-    await this.feedbackService.create({ text: body.message, userId: 1 });
-    feedbackEvents.next(`Новый отзыв добавлен`);
+  async create(@Body() body: any, @Req() req: Request) {
+    const s = (req as any).session;
+
+    await this.feedbackService.create(s.userId, body.text);
+
     return { url: '/feedback' };
   }
 
   @Post(':id/delete')
+  @UseGuards(AuthGuard)
   @Redirect('/feedback')
   async remove(@Param('id') id: string) {
     await this.feedbackService.remove(Number(id));
-    feedbackEvents.next('Отзыв удалён');
     return { url: '/feedback' };
   }
 }

@@ -1,5 +1,17 @@
-import { Controller, Get, Post, Body, Param, Redirect, Render, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Redirect,
+  Render,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { UserService } from './user.service';
+import { AuthGuard } from '../auth/auth.guard';
+import type { Request } from 'express';
 
 @Controller('users')
 export class UserController {
@@ -7,18 +19,31 @@ export class UserController {
 
   @Get()
   @Render('users/index')
-  async findAll(@Query('auth') auth?: string) {
+  async findAll(@Req() req: Request) {
     const users = await this.userService.findAll();
-    return { users, isAuth: auth === 'true', username: 'Агата' };
+    const s = (req as any).session;
+
+    return {
+      users,
+      isAuth: !!s?.userId,
+      username: s?.username,
+    };
   }
 
   @Get('add')
+  @UseGuards(AuthGuard)
   @Render('users/add')
-  addForm(@Query('auth') auth?: string) {
-    return { isAuth: auth === 'true', username: 'Агата' };
+  addForm(@Req() req: Request) {
+    const s = (req as any).session;
+
+    return {
+      isAuth: !!s?.userId,
+      username: s?.username,
+    };
   }
 
   @Post()
+  @UseGuards(AuthGuard)
   @Redirect('/users')
   async create(@Body() body: any) {
     await this.userService.create(body);
@@ -26,6 +51,7 @@ export class UserController {
   }
 
   @Post(':id/delete')
+  @UseGuards(AuthGuard)
   @Redirect('/users')
   async remove(@Param('id') id: string) {
     await this.userService.remove(Number(id));

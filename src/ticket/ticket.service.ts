@@ -5,22 +5,28 @@ import { PrismaService } from '../prisma.service';
 export class TicketService {
   constructor(private prisma: PrismaService) {}
 
-  findAll() {
-    return this.prisma.ticket.findMany({ include: { user: true, exhibition: true } });
-  }
-
-  create(data: { type: string; price: number; userId: number; exhibitionId: number }) {
-    return this.prisma.ticket.create({
-      data: {
-        type: data.type,
-        price: Number(data.price),
-        userId: Number(data.userId),
-        exhibitionId: Number(data.exhibitionId),
+  findByUser(userId: number) {
+    return this.prisma.ticket.findMany({
+      where: {
+        order: { userId },
+      },
+      include: {
+        exhibition: true,
+        order: true,
       },
     });
   }
 
-  remove(id: number) {
-    return this.prisma.ticket.delete({ where: { id } });
+  findAll() {
+    return this.prisma.ticket.findMany({
+      include: { exhibition: true, order: { include: { user: true } } },
+    });
+  }
+
+  findOne(id: number) {
+    return this.prisma.ticket.findUnique({
+      where: { id },
+      include: { exhibition: true, order: true },
+    });
   }
 }

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  {{> head}}
+  <title>Вход</title>
+</head>
+<body>
+  {{> header}}
+  <main class="main">
+    <div class="wrapper" style="max-width:400px;margin:60px auto">
+      <h1>Вход</h1>
+
+      {{#if error}}
+        <p style="color:red">Пользователь не найден</p>
+      {{/if}}
+
+      <form method="POST" action="/auth/login">
+        <label>
+          Имя:
+          <input type="text" name="name" required>
+        </label>
+
+        <button type="submit">Войти</button>
+      </form>
+
+      <p>Для входа пользователь уже должен быть в базе данных.</p>
+    </div>
+  </main>
+  {{> footer}}
+</body>
+</html>
