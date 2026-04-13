@@ -11,8 +11,10 @@ export class AppController {
   @Get()
   @Render('index')
   getIndex(@Query('auth') auth?: string) {
+    const session = this.getSession(auth);
     return {
-      ...this.getSession(auth),
+      ...session,
+      isAdmin: session.isAuth && session.username === 'Агата',
       exhibitions: [
         { name: 'Искусство портрета', date: '10 ноября – 20 декабря' },
         { name: '14 декабря 1825 года', date: '10 ноября – 20 декабря' },

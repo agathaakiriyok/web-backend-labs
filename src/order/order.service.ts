@@ -9,10 +9,9 @@ export class OrderService {
     return this.prisma.order.findMany({
       where: { userId },
       include: {
-        tickets: {
-          include: { exhibition: true },
+        items: {
+          include: { exhibition: true, hall: true },
         },
-        payments: true,
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -22,30 +21,47 @@ export class OrderService {
     return this.prisma.order.findUnique({
       where: { id },
       include: {
-        tickets: {
-          include: { exhibition: true },
+        items: {
+          include: { exhibition: true, hall: true },
         },
-        payments: true,
         user: true,
       },
     });
   }
 
-  async create(userId: number, exhibitionId: number, type: string, price: number) {
+  findAll() {
+    return this.prisma.order.findMany({
+      include: {
+        user: true,
+        items: {
+          include: { exhibition: true, hall: true },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async create(userId: number, exhibitionId: number, quantity: number, unitPrice: number) {
+    const exhibition = await this.prisma.exhibition.findUnique({ where: { id: exhibitionId } });
+    if (!exhibition) throw new Error('Exhibition not found');
+
+    const totalPrice = quantity * unitPrice;
+
     return this.prisma.order.create({
       data: {
         userId,
-        totalAmount: price,
+        totalPrice,
         status: 'PENDING',
-        tickets: {
+        items: {
           create: {
-            type,
-            price,
             exhibitionId,
+            hallId: exhibition.hallId,
+            quantity,
+            unitPrice,
           },
         },
       },
-      include: { tickets: true },
+      include: { items: true },
     });
   }
 

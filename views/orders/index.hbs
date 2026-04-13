@@ -5,15 +5,22 @@
   {{> header}}
   <main class="main">
     <div class="wrapper">
-      <h1>Мои заказы</h1>
+      {{#if isAdmin}}
+        <h1>Заказы пользователей</h1>
+      {{else}}
+        <h1>Мои заказы</h1>
+      {{/if}}
       {{#if orders.length}}
         <ul>
           {{#each orders}}
           <li>
             <a href="/orders/{{id}}">
-              Заказ №{{id}} — {{status}} — {{totalAmount}} ₽
+              Заказ №{{id}} — {{status}} — {{totalPrice}} ₽
             </a>
             — {{createdAt}}
+            {{#if isAdmin}}
+              — покупатель: {{user.name}}
+            {{/if}}
             {{#if (eq status "PENDING")}}
               <form method="POST" action="/orders/{{id}}/cancel" style="display:inline">
                 <button type="submit">Отменить</button>
@@ -23,7 +30,11 @@
           {{/each}}
         </ul>
       {{else}}
-        <p>У вас пока нет заказов. <a href="/exhibitions">Посмотреть выставки</a></p>
+        {{#if isAdmin}}
+          <p>Пока нет заказов.</p>
+        {{else}}
+          <p>У вас пока нет заказов. <a href="/exhibitions">Посмотреть выставки</a></p>
+        {{/if}}
       {{/if}}
     </div>
   </main>

@@ -1,1 +1,1 @@
-export class Exhibition {}
+export { Exhibition, Hall, OrderItem } from '../../shared/entities';

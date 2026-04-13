@@ -50,72 +50,7 @@ p {
     margin: auto;
 }
 
-.header {
-    background-color: #F7F1E1;
-    padding: 15px 0 17px 0;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-    position: sticky;
-    top: 0;
-    z-index: 1;
-}
 
-.header__wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-
-
-.logo img {
-    width: 50px;   
-    height: auto;  
-}
-
-.nav__list {
-    display: flex;
-} 
-
-.nav__item {
-    list-style: none;
-    padding: 0 10px;
-    margin: 0 15px;
-}
-
-.nav__link {
-    text-decoration: none;
-    color: #165E55;
-    font-weight: 500;
-    font-size: 1.1rem;
-    text-transform: uppercase;
-    transition: color 0.3s;
-}
-
-.nav__btn {
-    background-color: #165E55;
-    color: #F7F1E1;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.nav__btn:hover {
-    background-color: #0f4039;
-}
-
-.nav__link:hover {
-    color: #C2E5DD;
-    transform: scale(1.08);
-}
-
-.nav a.active {
-    font-weight: 700;
-    border-bottom: 2px solid #165E55;
-    color: #165E55;
-}
 
 .welcome {
     padding: 40px 20px;
@@ -265,6 +200,7 @@ p {
     font-weight: 500;
     transition: background-color 0.3s;
     text-align: center;
+    outline: none;
 }
 
 .exhibitions__btn:hover,
@@ -544,6 +480,7 @@ p {
     cursor: pointer;
     transition: background-color 0.3s;
     align-self: flex-start;
+    outline: none;
 }
 
 .exhibitions__btn:hover {
@@ -593,6 +530,7 @@ p {
     border-radius: 6px;
     font-size: 1rem;
     cursor: pointer;
+    outline: none;
 }
 
 
@@ -691,25 +629,6 @@ p {
         margin: auto;
     }
 
-    .header__wrapper {
-       justify-content: space-around;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .nav__list {
-        flex-direction: column;
-        align-items: center;
-        gap: 7px;
-    }
-
-    .nav__link {
-        font-size: 0.7rem;
-    }
-
-    .logo img {
-        width: 40px;
-    }
 
     .welcome {
         padding: 25px 10px;
@@ -832,23 +751,6 @@ p {
         max-width: 500px;
         margin: auto;
     }
-
-     .header__wrapper {
-       justify-content: space-around;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .nav__list {
-        flex-direction: column;
-        align-items: center;
-        gap: 7px;
-    }
-
-    .nav__link {
-        font-size: 0.7rem;
-    }
-
 
     .welcome__wrapper {
         flex-direction: column;

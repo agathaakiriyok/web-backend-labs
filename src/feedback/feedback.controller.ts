@@ -4,18 +4,34 @@ import {
   Post,
   Body,
   Param,
-  Redirect,
   Render,
   Req,
+  Res,
+  Sse,
   UseGuards,
+  ForbiddenException,
 } from '@nestjs/common';
 import { FeedbackService } from './feedback.service';
 import { AuthGuard } from '../auth/auth.guard';
-import type { Request } from 'express';
+import type { Request, Response } from 'express';
+import { Observable, Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+const feedbackEvents = new Subject<string>();
 
 @Controller('feedback')
 export class FeedbackController {
   constructor(private readonly feedbackService: FeedbackService) {}
+
+  @Sse('events')
+  events(@Res() res: Response): Observable<MessageEvent> {
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('X-Accel-Buffering', 'no');
+
+    return feedbackEvents.pipe(
+      map((data) => ({ data } as MessageEvent)),
+    );
+  }
 
   @Get()
   @Render('feedback')
@@ -27,25 +43,36 @@ export class FeedbackController {
       feedbacks,
       isAuth: !!s?.userId,
       username: s?.username,
+      isAdmin: s?.username === 'Агата',
     };
   }
 
   @Post()
   @UseGuards(AuthGuard)
-  @Redirect('/feedback')
-  async create(@Body() body: any, @Req() req: Request) {
+  async create(
+    @Body() body: { message: string },
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
     const s = (req as any).session;
-
-    await this.feedbackService.create(s.userId, body.text);
-
-    return { url: '/feedback' };
+    await this.feedbackService.create(s.userId, body.message);
+    feedbackEvents.next(`Добавлен новый отзыв от ${s.username}`);
+    return res.redirect('/feedback');
   }
 
   @Post(':id/delete')
   @UseGuards(AuthGuard)
-  @Redirect('/feedback')
-  async remove(@Param('id') id: string) {
+  async remove(
+    @Param('id') id: string,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    const s = (req as any).session;
+    const feedback = await this.feedbackService.findAll().then(f => f.find(fb => fb.id === Number(id)));
+    if (!feedback || (feedback.userId !== s.userId && s.username !== 'Агата')) {
+      throw new ForbiddenException('Нет доступа');
+    }
     await this.feedbackService.remove(Number(id));
-    return { url: '/feedback' };
+    return res.redirect('/feedback');
   }
 }

@@ -7,18 +7,18 @@
     <div class="wrapper">
       <h1>Заказ №{{order.id}}</h1>
       <p>Статус: <strong>{{order.status}}</strong></p>
-      <p>Сумма: {{order.totalAmount}} ₽</p>
-      <h2>Билеты</h2>
+      <p>Сумма: {{order.totalPrice}} ₽</p>
+      {{#if isAdmin}}
+        <p>Покупатель: {{order.user.name}}</p>
+      {{/if}}
+      <h2>Элементы заказа</h2>
       <ul>
-        {{#each order.tickets}}
-        <li>{{exhibition.name}} — {{type}} — {{price}} ₽</li>
+        {{#each order.items}}
+        <li>{{exhibition.name}} ({{hall.name}}) — {{quantity}} шт. — {{unitPrice}} ₽ за шт.</li>
         {{/each}}
       </ul>
       {{#if (eq order.status "PENDING")}}
-        <form method="POST" action="/payments/{{order.id}}/pay">
-          <input type="hidden" name="amount" value="{{order.totalAmount}}">
-          <button type="submit">Оплатить</button>
-        </form>
+        <p>Ожидает оплаты</p>
       {{/if}}
       <a href="/orders">← Назад к заказам</a>
     </div>

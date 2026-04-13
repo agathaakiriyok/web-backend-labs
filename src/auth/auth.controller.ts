@@ -43,7 +43,16 @@ export class AuthController {
   }
 
   @Get('logout')
-  async logout(@Req() req: Request, @Res() res: Response) {
+  async logoutGet(@Req() req: Request, @Res() res: Response) {
+    return this.doLogout(req, res);
+  }
+
+  @Post('logout')
+  async logoutPost(@Req() req: Request, @Res() res: Response) {
+    return this.doLogout(req, res);
+  }
+
+  private doLogout(req: Request, res: Response) {
     const s = (req as any).session;
 
     s.destroy((err: any) => {

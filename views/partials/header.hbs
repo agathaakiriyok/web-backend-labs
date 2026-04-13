@@ -1,18 +1,25 @@
-<header>
-  <nav>
-    <a href="/">Главная</a>
-    <a href="/exhibitions">Выставки</a>
-    <a href="/halls">Залы</a>
-    <a href="/tickets">Билеты</a>
-    <a href="/feedback">Отзывы</a>
-    {{#if isAuth}}
-      <span>Привет, {{username}}</span>
-      <form method="POST" action="/auth/logout" style="display:inline">
-        <button type="submit">Выйти</button>
-      </form>
-    {{else}}
-      <a href="/auth/login">Войти</a>
-      <a href="/auth/register">Регистрация</a>
-    {{/if}}
-  </nav>
+<header class="header">
+  <div class="wrapper header__wrapper">
+    <a class="logo" href="/">Эрмитаж</a>
+    <nav class="nav">
+      <ul class="nav__list">
+        <li class="nav__item"><a class="nav__link" href="/">Главная</a></li>
+        <li class="nav__item"><a class="nav__link" href="/exhibitions">Выставки</a></li>
+        <li class="nav__item"><a class="nav__link" href="/halls">Залы</a></li>
+        <li class="nav__item"><a class="nav__link" href="/tickets">Билеты</a></li>
+        <li class="nav__item"><a class="nav__link" href="/feedback">Отзывы</a></li>
+        {{#if isAuth}}
+          <li class="nav__item header__user">Привет, {{username}}{{#if isAdmin}} (админ){{/if}}</li>
+          <li class="nav__item">
+            <form method="POST" action="/auth/logout">
+              <button class="nav__btn" type="submit">Выйти</button>
+            </form>
+          </li>
+        {{else}}
+          <li class="nav__item"><a class="nav__btn" href="/auth/login">Войти</a></li>
+          <li class="nav__item"><a class="nav__btn" href="/auth/register">Регистрация</a></li>
+        {{/if}}
+      </ul>
+    </nav>
+  </div>
 </header>

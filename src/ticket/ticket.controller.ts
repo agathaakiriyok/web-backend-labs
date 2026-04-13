@@ -1,30 +1,62 @@
 import {
   Controller,
   Get,
-  Param,
+  Post,
+  Query,
+  Body,
   Render,
   Req,
+  Redirect,
   UseGuards,
+  ForbiddenException,
 } from '@nestjs/common';
-import { TicketService } from './ticket.service';
+import { OrderService } from '../order/order.service';
+import { PrismaService } from '../prisma.service';
 import { AuthGuard } from '../auth/auth.guard';
 import type { Request } from 'express';
 
 @Controller('tickets')
-@UseGuards(AuthGuard)
 export class TicketController {
-  constructor(private readonly ticketService: TicketService) {}
+  constructor(
+    private readonly orderService: OrderService,
+    private readonly prisma: PrismaService,
+  ) {}
 
-  @Get(':id')
-  @Render('tickets/show')
-  async findOne(@Param('id') id: string, @Req() req: Request) {
+  @Get()
+  @Render('tickets')
+  async ticketPage(@Query('exhibitionId') exhibitionId: string, @Req() req: Request) {
     const s = (req as any).session;
-    const ticket = await this.ticketService.findOne(Number(id));
+    const userOrders = s?.userId ? await this.orderService.findByUser(s.userId) : [];
+    const exhibition = exhibitionId
+      ? await this.prisma.exhibition.findUnique({
+          where: { id: Number(exhibitionId) },
+          include: { hall: true },
+        })
+      : null;
 
     return {
-      ticket,
+      exhibition,
+      userOrders,
       isAuth: !!s?.userId,
       username: s?.username,
+      isAdmin: s?.username === 'Агата',
     };
+  }
+
+  @Post()
+  @UseGuards(AuthGuard)
+  @Redirect('/orders')
+  async createOrder(@Body() body: any, @Req() req: Request) {
+    const s = (req as any).session;
+    const exhibitionId = Number(body.exhibitionId);
+    const quantity = Number(body.quantity) || 1;
+    const unitPrice = Number(body.unitPrice);
+
+    if (!exhibitionId || !unitPrice) {
+      throw new ForbiddenException('Неверные данные заказа');
+    }
+
+    await this.orderService.create(s.userId, exhibitionId, quantity, unitPrice);
+    return { url: '/orders' };
   }
 }

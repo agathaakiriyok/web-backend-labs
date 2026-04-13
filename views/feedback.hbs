@@ -7,19 +7,26 @@
   <section class="feedback">
     <div class="wrapper">
       <h2 class="feedback__title">Отзывы посетителей</h2>
+      {{#if isAuth}}
       <form class="feedback__form" action="/feedback" method="POST">
         <label class="contacts__label">Отзыв:
           <textarea name="message" required minlength="5"></textarea>
         </label>
         <button type="submit" class="contacts__btn">Добавить отзыв</button>
       </form>
+      {{else}}
+      <p><a href="/auth/login">Войдите</a>, чтобы оставить отзыв.</p>
+      {{/if}}
       <div class="feedback__list">
         {{#each feedbacks}}
         <div class="feedback__item">
           <p class="feedback__text">{{text}}</p>
+          <p class="feedback__author">{{user.name}} — {{createdAt}}</p>
+          {{#if ../isAdmin}}
           <form action="/feedback/{{id}}/delete" method="POST" style="display:inline">
             <button class="feedback__edit-btn" style="background:#993c1d;color:white">Удалить</button>
           </form>
+          {{/if}}
         </div>
         {{/each}}
       </div>
@@ -27,6 +34,5 @@
   </section>
 </main>
 {{> footer}}
-<script src="/js/sse.js"></script>
 </body>
 </html>

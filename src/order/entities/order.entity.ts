@@ -1,1 +1,1 @@
-export class Order {}
+export { Order, User, OrderItem } from '../../shared/entities';

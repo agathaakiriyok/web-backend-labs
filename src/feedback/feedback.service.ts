@@ -14,7 +14,11 @@ export class FeedbackService {
 
   create(userId: number, text: string) {
     return this.prisma.feedback.create({
-      data: { userId, text },
+      data: {
+        userId,
+        text,
+      },
+      include: { user: true },
     });
   }
 

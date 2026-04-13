@@ -7,29 +7,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-enum OrderStatus {
-  PENDING
-  PAID
-  CANCELLED
-}
-
-enum PaymentStatus {
-  PENDING
-  SUCCESS
-  FAILED
-}
-
-
 model User {
-  id        Int       @id @default(autoincrement())
+  id        Int        @id @default(autoincrement())
   name      String
-  email     String    @unique
+  email     String     @unique
   password  String
-  createdAt DateTime  @default(now())
-
-  orders    Order[]
+  createdAt DateTime   @default(now())
   feedbacks Feedback[]
+  orders    Order[]
 
   @@map("users")
 }
@@ -38,75 +23,63 @@ model Hall {
   id          Int          @id @default(autoincrement())
   name        String
   capacity    Int
-
   exhibitions Exhibition[]
+  orderItems  OrderItem[]
 
   @@map("halls")
 }
 
 model Exhibition {
-  id          Int       @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   name        String
-  description String
+  description String?
   dateStart   DateTime
   dateEnd     DateTime
-
-  hall        Hall      @relation(fields: [hallId], references: [id], onDelete: Cascade)
   hallId      Int
-
-  tickets     Ticket[]
+  hall        Hall        @relation(fields: [hallId], references: [id], onDelete: Restrict)
+  orderItems  OrderItem[]
 
   @@map("exhibitions")
 }
 
 model Order {
-  id          Int          @id @default(autoincrement())
-  createdAt   DateTime     @default(now())
-  status      OrderStatus  @default(PENDING)
-  totalAmount Float
-
-  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      Int
-
-  tickets     Ticket[]
-  payments    Payment[]
+  id         Int         @id @default(autoincrement())
+  userId     Int
+  status     OrderStatus @default(PENDING)
+  totalPrice Decimal     @db.Decimal(10, 2)
+  createdAt  DateTime    @default(now())
+  items      OrderItem[]
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("orders")
 }
 
-model Ticket {
+model OrderItem {
   id           Int        @id @default(autoincrement())
-  type         String
-  price        Float
-
-  exhibition   Exhibition @relation(fields: [exhibitionId], references: [id], onDelete: Cascade)
-  exhibitionId Int
-
-  order        Order      @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId      Int
+  exhibitionId Int
+  hallId       Int
+  quantity     Int        @default(1)
+  unitPrice    Decimal    @db.Decimal(10, 2)
+  exhibition   Exhibition @relation(fields: [exhibitionId], references: [id], onDelete: Restrict)
+  hall         Hall       @relation(fields: [hallId], references: [id], onDelete: Restrict)
+  order        Order      @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
-  @@map("tickets")
-}
-
-model Payment {
-  id        Int           @id @default(autoincrement())
-  amount    Float
-  status    PaymentStatus @default(PENDING)
-  createdAt DateTime      @default(now())
-
-  order     Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  orderId   Int
-
-  @@map("payments")
+  @@map("order_items")
 }
 
 model Feedback {
   id        Int      @id @default(autoincrement())
   text      String
   createdAt DateTime @default(now())
-
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("feedbacks")
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  CANCELLED
 }

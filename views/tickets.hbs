@@ -14,25 +14,55 @@
         <section class="tickets">
             <div class="wrapper">
                 <h1>Покупка билетов</h1>
-                <form class="tickets__form">
-                    <label class="tickets__label">
-                        Ваше имя:
-                        <input type="text" placeholder="Введите имя">
+                {{#if exhibition}}
+                <div class="tickets__card">
+                    <div class="exhibition__image">
+                        <img src="/img/{{exhibition.id}}.jpg" alt="{{exhibition.name}}">
+                    </div>
+                    <div class="tickets__details">
+                        <h2>{{exhibition.name}}</h2>
+                        <p>{{exhibition.description}}</p>
+                        <p><strong>Период:</strong> {{exhibition.dateStart}} - {{exhibition.dateEnd}}</p>
+                        <p><strong>Зал:</strong> {{exhibition.hall.name}}</p>
+                    </div>
+                </div>
+                <form class="tickets__form" action="/tickets" method="POST">
+                    <input type="hidden" name="exhibitionId" value="{{exhibition.id}}">
+                    <label class="tickets__label">Количество:
+                        <input type="number" name="quantity" min="1" value="1" required>
                     </label>
-                    <label class="tickets__label">
-                        Email:
-                        <input type="email" placeholder="example@mail.com">
+                    <label class="tickets__label">Цена за единицу:
+                        <input type="number" name="unitPrice" value="500" step="0.01" required>
                     </label>
-                    <label class="tickets__label">
-                        Тип билета:
-                        <select>
-                            <option>Стандартный</option>
-                            <option>Льготный</option>
-                            <option>Экскурсионный</option>
-                        </select>
-                    </label>
-                    <button class="tickets__btn">Оформить</button>
+                    <button class="tickets__btn" type="submit">Оформить</button>
                 </form>
+                {{else}}
+                <p>Выберите выставку на странице <a href="/exhibitions">Выставки</a>, чтобы оформить билет.</p>
+                {{/if}}
+
+                {{#if isAuth}}
+                <section style="margin-top: 32px;">
+                    <h2>Мои купленные билеты</h2>
+                    {{#if userOrders.length}}
+                    <ul>
+                        {{#each userOrders}}
+                        <li style="margin-bottom: 16px;">
+                            <strong>Заказ №{{id}}</strong> — {{status}} — {{totalPrice}} ₽
+                            <ul>
+                                {{#each items}}
+                                <li>
+                                    {{exhibition.name}} — {{quantity}} шт. — {{unitPrice}} ₽ за билет
+                                </li>
+                                {{/each}}
+                            </ul>
+                        </li>
+                        {{/each}}
+                    </ul>
+                    {{else}}
+                    <p>У вас пока нет купленных билетов.</p>
+                    {{/if}}
+                </section>
+                {{/if}}
             </div>
         </section>
 

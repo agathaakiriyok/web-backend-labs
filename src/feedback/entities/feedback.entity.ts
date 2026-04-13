@@ -1,1 +1,1 @@
-export class Feedback {}
+export { Feedback } from '../../shared/entities';
