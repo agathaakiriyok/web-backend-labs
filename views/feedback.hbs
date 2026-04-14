@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    {{> head}}
+    <title>Отзывы посетителей</title>
+</head>
+
+<body>
+
+    {{> header}}
+
+    <main class="main">
+        <section class="feedback">
+            <div class="wrapper">
+                <h2 class="feedback__title">Отзывы посетителей</h2>
+                <form class="feedback__form" id="feedbackForm">
+                    <label class="contacts__label">Имя:
+                        <input type="text" name="name" id="name" required minlength="2">
+                    </label>
+                    <label class="contacts__label">Email:
+                        <input type="email" name="email" id="email" required>
+                    </label>
+                    <label class="contacts__label">Отзыв:
+                        <textarea name="message" id="message" required minlength="5"></textarea>
+                    </label>
+                    <button type="submit" class="contacts__btn">Добавить отзыв</button>
+                </form>
+                <template id="feedbackTemplate">
+                    <div class="feedback__item">
+                        <p class="feedback__name"></p>
+                        <p class="feedback__email"></p>
+                        <p class="feedback__text"></p>
+                        <button class="feedback__edit-btn">Редактировать</button>
+                    </div>
+                </template>
+                <div id="feedbackList" class="feedback__list"></div>
+            </div>
+        </section>
+    </main>
+
+    {{> footer}}
+
+</body>
+
+</html>

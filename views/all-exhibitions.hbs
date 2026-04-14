@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    {{> head}}
+    <title>Выставки — Эрмитаж</title>
+</head>
+
+<body>
+
+    {{> header}}
+
+    <main class="main">
+        <section class="exhibitions-page">
+            <h1 class="exhibitions-page__title">Выставки</h1>
+            <ul class="exhibitions-page__list">
+
+                <li class="exhibitions-page__item">
+                    <div class="exhibition__image">
+                        <img src="/img/1.jpg" alt="Искусство портрета">
+                    </div>
+                    <div class="exhibition__content">
+                        <h3 class="exhibitions-page__name">Искусство портрета</h3>
+                        <p class="exhibitions-page__description">Выставка посвящена всемирной истории портрета, от
+                            зарождения портретных форм до наших дней. Для выставки отобраны лучшие образцы портретного
+                            искусства из собрания Эрмитажа, представляющие разные исторические эпохи и цивилизации.</p>
+                        <p class="exhibitions-page__date">8 декабря 2025 - 29 марта 2026</p>
+                        <button class="exhibitions__btn exhibitions__btn--modal">Купить билет</button>
+                    </div>
+                </li>
+
+                <li class="exhibitions-page__item">
+                    <div class="exhibition__image">
+                        <img src="/img/2.jpg" alt="14 декабря 1825 года">
+                    </div>
+                    <div class="exhibition__content">
+                        <h3 class="exhibitions-page__name">14 декабря 1825 года</h3>
+                        <p class="exhibitions-page__description">Выставка посвящена восстанию декабристов, состоявшемуся
+                            на Сенатской площади в Санкт-Петербурге 14 декабря 1825 года. Выставка готовится совместно с
+                            Государственным архивом Российской Федерации.</p>
+                        <p class="exhibitions-page__date">13 декабря 2025 - 5 апреля 2026</p>
+                        <button class="exhibitions__btn exhibitions__btn--modal">Купить билет</button>
+                    </div>
+                </li>
+
+                <li class="exhibitions-page__item">
+                    <div class="exhibition__image">
+                        <img src="/img/3.jpg" alt="Музейный детектив">
+                    </div>
+                    <div class="exhibition__content">
+                        <h3 class="exhibitions-page__name">Музейный детектив</h3>
+                        <p class="exhibitions-page__description">Выставка посвящена одному из уникальных произведений
+                            античной пластики – позолоченной бронзовой статуе «Виктория Кальватоне». Предполагается
+                            новый, инновационный формат метаиммерсивной выставки с элементами детективного
+                            расследования.</p>
+                        <p class="exhibitions-page__date">15 февраля 2026 - 31 мая 2026</p>
+                        <button class="exhibitions__btn exhibitions__btn--modal">Купить билет</button>
+                    </div>
+                </li>
+
+                <li class="exhibitions-page__item">
+                    <div class="exhibition__image">
+                        <img src="/img/4.jpg" alt="Бернардино Луини">
+                    </div>
+                    <div class="exhibition__content">
+                        <h3 class="exhibitions-page__name">Бернардино Луини</h3>
+                        <p class="exhibitions-page__description">Выставка посвящена одному из важнейших последователей
+                            Леонардо да Винчи и крупнейшему художнику ломбардской школы живописи эпохи Ренессанса. В
+                            эрмитажном собрании три работы Бернардино Луини, и все они показаны на выставке.</p>
+                        <p class="exhibitions-page__date">18 октября 2025 - 23 ноября 2025</p>
+                        <button class="exhibitions__btn exhibitions__btn--modal">Купить билет</button>
+                    </div>
+                </li>
+
+                <li class="exhibitions-page__item">
+                    <div class="exhibition__image">
+                        <img src="/img/5.jpeg" alt="Уголок Эребуни в Эрмитаже">
+                    </div>
+                    <div class="exhibition__content">
+                        <h3 class="exhibitions-page__name">Уголок Эребуни в Эрмитаже</h3>
+                        <p class="exhibitions-page__description">История раскопок двух урартских крепостей превратила
+                            урартологию из филологической науки в историческую. Сенсационные массовые находки уникальных
+                            вещей в погибшем при штурме Кармир-блуре сделали урартскую культуру осязаемой.</p>
+                        <p class="exhibitions-page__date">15 февраля 2024 - 15 февраля 2026</p>
+                        <button class="exhibitions__btn exhibitions__btn--modal">Купить билет</button>
+                    </div>
+                </li>
+
+            </ul>
+        </section>
+
+        <div class="modal modal--hidden">
+            <div class="modal__content">
+                <span class="modal__close">&times;</span>
+                <div class="modal__body">
+                    <div class="modal__image">
+                        <img src="/img/tickets_img.png" alt="Билет">
+                    </div>
+                    <div class="modal__form-container">
+                        <h3 class="modal__title">Оформление билетов</h3>
+                        <form class="modal__form">
+                            <label class="modal__label">Количество:
+                                <input type="number" name="quantity" min="1" value="1">
+                            </label>
+                            <label class="modal__label">Цена за билет:
+                                <input type="text" name="price" value="500 ₽" readonly>
+                            </label>
+                            <button type="submit" class="modal__submit">Оплатить</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    {{> footer}}
+
+</body>
+
+</html>

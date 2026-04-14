@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    {{> head}}
+    <title>Билеты</title>
+</head>
+
+<body>
+
+    {{> header}}
+
+    <main class="main">
+        <section class="tickets">
+            <div class="wrapper">
+                <h1>Покупка билетов</h1>
+                <form class="tickets__form">
+                    <label class="tickets__label">
+                        Ваше имя:
+                        <input type="text" placeholder="Введите имя">
+                    </label>
+                    <label class="tickets__label">
+                        Email:
+                        <input type="email" placeholder="example@mail.com">
+                    </label>
+                    <label class="tickets__label">
+                        Тип билета:
+                        <select>
+                            <option>Стандартный</option>
+                            <option>Льготный</option>
+                            <option>Экскурсионный</option>
+                        </select>
+                    </label>
+                    <button class="tickets__btn">Оформить</button>
+                </form>
+            </div>
+        </section>
+
+    </main>
+    {{> footer}}
+
+</body>
+
+</html>

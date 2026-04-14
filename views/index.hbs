@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    {{> head}}
+    <title>Эрмитаж</title>
+</head>
+
+<body>
+
+{{> header}}
+
+<main class="main">
+
+    <section class="welcome" id="welcome">
+        <div class="wrapper welcome__wrapper">
+            <div class="welcome__content">
+                <h1 class="welcome__title">Добро пожаловать в <strong>Эрмитаж</strong></h1>
+                <p class="welcome__subtitle"><em>Один из крупнейших музеев мира</em></p>
+            </div>
+            <div class="welcome__img">
+                <img src="/img/welcome_img.png" alt="Эрмитаж">
+            </div>
+        </div>
+    </section>
+
+    <section class="gallery" id="gallery">
+        <div class="wrapper">
+            <h2 class="gallery__title">Галерея</h2>
+            <div class="gallery__slider slider">
+                <button class="slider__btn slider__btn--prev">&lt;</button>
+                <div class="slider__track">
+                    <figure class="slider__item">
+                        <img src="/img/madonna.jpg" alt="Мадонна Литта">
+                        <figcaption class="slider__caption">«Мадонна Литта» — Леонардо да Винчи</figcaption>
+                    </figure>
+
+                    <figure class="slider__item">
+                        <img src="/img/rembrandt.jpg" alt="Возвращение блудного сына">
+                        <figcaption class="slider__caption">«Возвращение блудного сына» — Рембрандт</figcaption>
+                    </figure>
+
+                    <figure class="slider__item">
+                        <img src="/img/mona-lisa.png" alt="Мона Лиза">
+                        <figcaption class="slider__caption">«Мона Лиза» — Леонардо да Винчи</figcaption>
+                    </figure>
+
+                    <figure class="slider__item">
+                        <img src="/img/dama.jpg" alt="Дама с горностаем">
+                        <figcaption class="slider__caption">«Дама с горностаем» — Леонардо да Винчи</figcaption>
+                    </figure>
+                </div>
+                <button class="slider__btn slider__btn--next">&gt;</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="exhibitions" id="exhibitions">
+        <div class="wrapper">
+            <h2 class="exhibitions__title">Ближайшие выставки</h2>
+
+            <ul class="exhibitions__list">
+                {{#each exhibitions}}
+                    {{> exhibition-card}}
+                {{/each}}
+            </ul>
+        </div>
+    </section>
+
+    <section class="contacts" id="contacts">
+        <div class="wrapper">
+            <h2 class="contacts__title">Свяжитесь с нами</h2>
+            <form class="contacts__form">
+                <label class="contacts__label">Имя: <input type="text" name="name"></label>
+                <label class="contacts__label">Email: <input type="email" name="email"></label>
+                <label class="contacts__label">Сообщение: <textarea name="message"></textarea></label>
+                <button type="submit" class="contacts__btn">Отправить</button>
+            </form>
+        </div>
+    </section>
+
+    <section class="schedule">
+        <div class="wrapper">
+            <table class="schedule__table">
+                <thead>
+                    <tr class="schedule__caption">
+                        <th colspan="3">Расписание работы залов</th>
+                    </tr>
+                    <tr class="column-headers">
+                        <th>Зал</th>
+                        <th>Название</th>
+                        <th>Часы работы</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Итальянское Возрождение</td>
+                        <td>10:00 – 18:00</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Голландская живопись</td>
+                        <td>11:00 – 19:00</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Античная скульптура</td>
+                        <td>10:00 – 17:00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="users" id="users">
+        <div class="wrapper">
+            <h2 class="users__title">Посетители музея</h2>
+
+            <button class="users__btn" id="loadUsersBtn">
+                Загрузить посетителей
+            </button>
+
+            <div class="users__loader users__loader--hidden" id="usersLoader"></div>
+
+            <ul class="users__list users__list--hidden" id="usersList"></ul>
+
+            <p class="users__error users__error--hidden" id="usersError"></p>
+        </div>
+
+        <template id="userTemplate">
+            <li class="users__item">
+                <h3 class="users__name"></h3>
+                <p class="users__email"></p>
+                <p class="users__city"></p>
+            </li>
+        </template>
+    </section>
+
+</main>
+
+{{> footer}}
+
+</body>
+</html>
