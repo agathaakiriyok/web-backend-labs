@@ -11,47 +11,62 @@ import {
 } from '@nestjs/common';
 import { HallService } from './hall.service';
 import { AuthGuard } from '../auth/auth.guard';
+import { AdminGuard } from '../auth/admin.guard';
 import type { Request } from 'express';
 
 @Controller('halls')
 export class HallController {
   constructor(private readonly hallService: HallService) {}
 
+  private session(req: Request) {
+    const s = (req as any).session;
+    return {
+      isAuth: !!s?.userId,
+      username: s?.username,
+      isAdmin: s?.username === 'Агата',
+    };
+  }
+
   @Get()
   @Render('halls/index')
   async findAll(@Req() req: Request) {
     const halls = await this.hallService.findAll();
-    const s = (req as any).session;
-
-    return {
-      halls,
-      isAuth: !!s?.userId,
-      username: s?.username,
-    };
+    return { halls, ...this.session(req) };
   }
 
   @Get('add')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, AdminGuard)
   @Render('halls/add')
   addForm(@Req() req: Request) {
-    const s = (req as any).session;
+    return this.session(req);
+  }
 
-    return {
-      isAuth: !!s?.userId,
-      username: s?.username,
-    };
+  @Get(':id/edit')
+  @UseGuards(AuthGuard, AdminGuard)
+  @Render('halls/edit')
+  async editForm(@Param('id') id: string, @Req() req: Request) {
+    const hall = await this.hallService.findOne(Number(id));
+    return { hall, ...this.session(req) };
   }
 
   @Post()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, AdminGuard)
   @Redirect('/halls')
   async create(@Body() body: any) {
     await this.hallService.create(body);
     return { url: '/halls' };
   }
 
+  @Post(':id/update')
+  @UseGuards(AuthGuard, AdminGuard)
+  @Redirect('/halls')
+  async update(@Param('id') id: string, @Body() body: any) {
+    await this.hallService.update(Number(id), body);
+    return { url: '/halls' };
+  }
+
   @Post(':id/delete')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, AdminGuard)
   @Redirect('/halls')
   async remove(@Param('id') id: string) {
     await this.hallService.remove(Number(id));

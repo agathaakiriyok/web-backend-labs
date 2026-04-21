@@ -6,20 +6,16 @@ export class AuthService {
   constructor(private readonly prisma: PrismaService) {}
 
   async login(name: string) {
-    let user = await this.prisma.user.findFirst({
-      where: { name },
-    });
+    return this.prisma.user.findFirst({ where: { name } });
+  }
 
-    if (!user) {
-      user = await this.prisma.user.create({
-        data: {
-          name,
-          email: `${name.toLowerCase()}@example.com`,
-          password: 'password', 
-        },
-      });
-    }
+  async register(name: string, email: string, password: string) {
+    const nameTaken = await this.prisma.user.findFirst({ where: { name } });
+    if (nameTaken) return null;
 
-    return user;
+    const emailTaken = await this.prisma.user.findFirst({ where: { email } });
+    if (emailTaken) return null;
+
+    return this.prisma.user.create({ data: { name, email, password } });
   }
 }

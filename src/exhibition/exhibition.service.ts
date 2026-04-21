@@ -16,14 +16,10 @@ export class ExhibitionService {
     let exhibitions = await this.prisma.exhibition.findMany({ include: { hall: true } });
     if (exhibitions.length === 0) {
       // Seed data
-      const hall = await this.prisma.hall.upsert({
-        where: { id: 1 },
-        update: {},
-        create: {
-          name: 'Главный зал',
-          capacity: 100,
-        },
-      });
+      let hall = await this.prisma.hall.findFirst({ where: { name: 'Главный зал' } });
+      if (!hall) {
+        hall = await this.prisma.hall.create({ data: { name: 'Главный зал', capacity: 100 } });
+      }
       await this.prisma.exhibition.createMany({
         data: [
           {

@@ -2,11 +2,14 @@
 <html lang="ru">
 <head>{{> head}}<title>Отзывы посетителей</title></head>
 <body>
+<input type="hidden" id="current-user-id" value="{{userId}}">
+<input type="hidden" id="is-admin" value="{{isAdmin}}">
 {{> header}}
 <main class="main">
   <section class="feedback">
     <div class="wrapper">
       <h2 class="feedback__title">Отзывы посетителей</h2>
+
       {{#if isAuth}}
       <form class="feedback__form" action="/feedback" method="POST">
         <label class="contacts__label">Отзыв:
@@ -17,16 +20,22 @@
       {{else}}
       <p><a href="/auth/login">Войдите</a>, чтобы оставить отзыв.</p>
       {{/if}}
+
       <div class="feedback__list">
         {{#each feedbacks}}
-        <div class="feedback__item">
+        <div class="feedback__item" data-feedback-id="{{id}}">
           <p class="feedback__text">{{text}}</p>
           <p class="feedback__author">{{user.name}} — {{createdAt}}</p>
-          {{#if ../isAdmin}}
-          <form action="/feedback/{{id}}/delete" method="POST" style="display:inline">
-            <button class="feedback__edit-btn" style="background:#993c1d;color:white">Удалить</button>
-          </form>
-          {{/if}}
+          <div class="feedback__actions">
+            {{#if canEdit}}
+            <a href="/feedback/{{id}}/edit" class="feedback__edit-btn">Редактировать</a>
+            {{/if}}
+            {{#if canDelete}}
+            <form action="/feedback/{{id}}/delete" method="POST" style="display:inline">
+              <button class="feedback__edit-btn feedback__edit-btn--danger">Удалить</button>
+            </form>
+            {{/if}}
+          </div>
         </div>
         {{/each}}
       </div>

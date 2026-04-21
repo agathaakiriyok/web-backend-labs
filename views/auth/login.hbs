@@ -2,27 +2,27 @@
 <html lang="ru">
 <head>
   {{> head}}
-  <title>Вход</title>
+  <title>Вход — Эрмитаж</title>
 </head>
 <body>
   {{> header}}
   <main class="main">
-    <div class="wrapper" style="max-width:400px;margin:60px auto">
+    <div class="auth-page">
       <h1>Вход</h1>
 
       {{#if error}}
-        <p style="color:red">Пользователь не найден</p>
+        <p class="auth-page__error">Пользователь не найден. Сначала <a href="/auth/register">зарегистрируйтесь</a>.</p>
       {{/if}}
 
-      <form method="POST" action="/auth/login">
-        <label>
+      <form class="tickets__form" method="POST" action="/auth/login">
+        <label class="tickets__label">
           Имя:
-          <input type="text" name="name" required>
+          <input type="text" name="name" required autocomplete="username">
         </label>
-
-        <button type="submit">Войти</button>
+        <button type="submit" class="tickets__btn">Войти</button>
       </form>
 
+      <p class="auth-page__link">Нет аккаунта? <a href="/auth/register">Зарегистрироваться</a></p>
     </div>
   </main>
   {{> footer}}

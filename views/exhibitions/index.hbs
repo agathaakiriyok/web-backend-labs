@@ -11,49 +11,47 @@
 
     <main class="main">
         <section class="exhibitions-page">
-            <h1 class="exhibitions-page__title">Выставки</h1>
-            <ul class="exhibitions-page__list">
-                {{#each exhibitions}}
-                <li class="exhibitions-page__item">
-                    <div class="exhibition__image">
-                        <img src="{{image}}" alt="{{name}}">
-                    </div>
-                    <div class="exhibition__content">
-                        <h3 class="exhibitions-page__name">{{name}}</h3>
-                        <p class="exhibitions-page__description">{{description}}</p>
-                        <p class="exhibitions-page__date">{{dateStart}} - {{dateEnd}}</p>
-                        <a href="/tickets?exhibitionId={{id}}" class="exhibitions__btn exhibitions__btn--modal">Купить билет</a>
-                    </div>
-                </li>
-                {{/each}}
-            </ul>
+            <div class="wrapper">
+                <h1 class="exhibitions-page__title">Выставки</h1>
+                {{#if isAdmin}}
+                <div class="crud-actions crud-actions--center">
+                    <a href="/exhibitions/add"><button class="nav__btn">+ Добавить выставку</button></a>
+                </div>
+                {{/if}}
+                <ul class="exhibitions-page__list">
+                    {{#each exhibitions}}
+                    <li class="exhibitions-page__item">
+                        <div class="exhibition__image">
+                            <img src="{{image}}" alt="{{name}}">
+                        </div>
+                        <div class="exhibition__content">
+                            <h3 class="exhibitions-page__name">{{name}}</h3>
+                            <p class="exhibitions-page__description">{{description}}</p>
+                            <p class="exhibitions-page__date">{{dateStart}} — {{dateEnd}}</p>
+                            {{#if ../canBuy}}
+                            <a href="/tickets?exhibitionId={{id}}" class="exhibitions__btn">Купить билет</a>
+                            {{else}}
+                            {{#unless ../isAuth}}
+                            <a href="/auth/login" class="exhibitions__btn">Войти для покупки</a>
+                            {{/unless}}
+                            {{/if}}
+                            {{#if ../isAdmin}}
+                            <div class="crud-actions" style="margin-top:10px">
+                                <a href="/exhibitions/{{id}}/edit"><button class="nav__btn">Редактировать</button></a>
+                                <form action="/exhibitions/{{id}}/delete" method="POST" style="display:inline">
+                                    <button class="nav__btn nav__btn--danger">Удалить</button>
+                                </form>
+                            </div>
+                            {{/if}}
+                        </div>
+                    </li>
+                    {{/each}}
+                </ul>
+            </div>
         </section>
     </main>
 
     {{> footer}}
-
-    <div class="modal modal--hidden">
-        <div class="modal__content">
-            <span class="modal__close">&times;</span>
-            <div class="modal__body">
-                <div class="modal__image">
-                    <img src="img/tickets_img.png" alt="Билет">
-                </div>
-                <div class="modal__form-container">
-                    <h3 class="modal__title">Оформление билетов</h3>
-                    <form class="modal__form">
-                        <label class="modal__label">Количество:
-                            <input type="number" name="quantity" min="1" value="1">
-                        </label>
-                        <label class="modal__label">Цена за билет:
-                            <input type="text" name="price" value="500 ₽" readonly>
-                        </label>
-                        <button type="submit" class="modal__submit">Оплатить</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 
 </body>
 </html>

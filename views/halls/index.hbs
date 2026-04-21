@@ -7,17 +7,25 @@
   <section class="tickets">
     <div class="wrapper">
       <h1>Залы музея</h1>
-      <a href="/halls/add"><button class="nav__btn">+ Добавить зал</button></a>
-      <ul class="exhibitions-page__list" style="margin-top:20px">
+      {{#if isAdmin}}
+      <div style="text-align:center;margin-bottom:20px">
+        <a href="/halls/add"><button class="nav__btn">+ Добавить зал</button></a>
+      </div>
+      {{/if}}
+      <ul class="exhibitions-page__list">
         {{#each halls}}
         <li class="exhibitions-page__item">
           <div class="exhibition__content">
             <h3 class="exhibitions-page__name">{{name}}</h3>
             <p>Вместимость: {{capacity}}</p>
-            <form action="/halls/{{id}}/delete" method="POST" style="display:inline">
-              <button class="nav__btn" style="background:#993c1d">Удалить</button>
-            </form>
-            <h3 class="exhibitions-page__name">{{name}} (ID: {{id}})</h3>
+            {{#if ../isAdmin}}
+            <div class="crud-actions">
+              <a href="/halls/{{id}}/edit"><button class="nav__btn">Редактировать</button></a>
+              <form action="/halls/{{id}}/delete" method="POST" style="display:inline">
+                <button class="nav__btn nav__btn--danger">Удалить</button>
+              </form>
+            </div>
+            {{/if}}
           </div>
         </li>
         {{/each}}

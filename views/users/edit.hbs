@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>{{> head}}<title>Редактировать пользователя</title></head>
+<body>
+{{> header}}
+<main class="main">
+  <section class="tickets">
+    <div class="wrapper">
+      <h1>Редактировать пользователя</h1>
+      <form class="tickets__form" action="/users/{{user.id}}/update" method="POST">
+        <label class="tickets__label">Имя:
+          <input type="text" name="name" value="{{user.name}}" required>
+        </label>
+        <label class="tickets__label">Email:
+          <input type="email" name="email" value="{{user.email}}" required>
+        </label>
+        <button class="tickets__btn">Сохранить</button>
+      </form>
+      <p style="text-align:center;margin-top:16px"><a href="/users">← Назад к пользователям</a></p>
+    </div>
+  </section>
+</main>
+{{> footer}}
+</body>
+</html>

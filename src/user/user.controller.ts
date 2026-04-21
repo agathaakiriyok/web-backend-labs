@@ -17,29 +17,35 @@ import type { Request } from 'express';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  private session(req: Request) {
+    const s = (req as any).session;
+    return {
+      isAuth: !!s?.userId,
+      username: s?.username,
+      isAdmin: s?.username === 'Агата',
+    };
+  }
+
   @Get()
   @Render('users/index')
   async findAll(@Req() req: Request) {
     const users = await this.userService.findAll();
-    const s = (req as any).session;
-
-    return {
-      users,
-      isAuth: !!s?.userId,
-      username: s?.username,
-    };
+    return { users, ...this.session(req) };
   }
 
   @Get('add')
   @UseGuards(AuthGuard)
   @Render('users/add')
   addForm(@Req() req: Request) {
-    const s = (req as any).session;
+    return this.session(req);
+  }
 
-    return {
-      isAuth: !!s?.userId,
-      username: s?.username,
-    };
+  @Get(':id/edit')
+  @UseGuards(AuthGuard)
+  @Render('users/edit')
+  async editForm(@Param('id') id: string, @Req() req: Request) {
+    const user = await this.userService.findOne(Number(id));
+    return { user, ...this.session(req) };
   }
 
   @Post()
@@ -47,6 +53,14 @@ export class UserController {
   @Redirect('/users')
   async create(@Body() body: any) {
     await this.userService.create(body);
+    return { url: '/users' };
+  }
+
+  @Post(':id/update')
+  @UseGuards(AuthGuard)
+  @Redirect('/users')
+  async update(@Param('id') id: string, @Body() body: any) {
+    await this.userService.update(Number(id), body);
     return { url: '/users' };
   }
 

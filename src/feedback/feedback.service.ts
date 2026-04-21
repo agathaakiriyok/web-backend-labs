@@ -12,12 +12,24 @@ export class FeedbackService {
     });
   }
 
+  findOne(id: number) {
+    return this.prisma.feedback.findUnique({
+      where: { id },
+      include: { user: true },
+    });
+  }
+
   create(userId: number, text: string) {
     return this.prisma.feedback.create({
-      data: {
-        userId,
-        text,
-      },
+      data: { userId, text },
+      include: { user: true },
+    });
+  }
+
+  update(id: number, text: string) {
+    return this.prisma.feedback.update({
+      where: { id },
+      data: { text },
       include: { user: true },
     });
   }
