@@ -53,6 +53,6 @@ Render: https://agathaakiriyok.onrender.com
 
 ## ER-диаграмма
 
-<img width="440" height="572" alt="Снимок экрана 2026-03-24 в 23 51 10" src="https://github.com/user-attachments/assets/7454aded-1f42-42be-8071-b18edf10172e" />
-https://agathaakiriyok.onrender.com
+<img width="323" height="543" alt="Снимок экрана 2026-04-21 в 17 53 41" src="https://github.com/user-attachments/assets/62a58cb1-d4a4-40f5-9ac1-6eae43e5bde9" />
+
 
