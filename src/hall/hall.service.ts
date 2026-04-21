@@ -13,16 +13,23 @@ export class HallService {
     return this.prisma.hall.findUnique({ where: { id } });
   }
 
+  findExhibitions(hallId: number) {
+    return this.prisma.exhibition.findMany({ where: { hallId } });
+  }
+
   create(data: { name: string; capacity: number }) {
     return this.prisma.hall.create({
       data: { name: data.name, capacity: Number(data.capacity) },
     });
   }
 
-  update(id: number, data: { name: string; capacity: number }) {
+  update(id: number, data: { name?: string; capacity?: number }) {
     return this.prisma.hall.update({
       where: { id },
-      data: { name: data.name, capacity: Number(data.capacity) },
+      data: {
+        ...(data.name !== undefined && { name: data.name }),
+        ...(data.capacity !== undefined && { capacity: Number(data.capacity) }),
+      },
     });
   }
 

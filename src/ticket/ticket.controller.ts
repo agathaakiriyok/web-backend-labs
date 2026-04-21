@@ -1,3 +1,4 @@
+import { ApiExcludeController } from '@nestjs/swagger';
 import {
   Controller,
   Get,
@@ -14,6 +15,7 @@ import { PrismaService } from '../prisma.service';
 import { AuthGuard } from '../auth/auth.guard';
 import type { Request, Response } from 'express';
 
+@ApiExcludeController()
 @Controller('tickets')
 export class TicketController {
   constructor(

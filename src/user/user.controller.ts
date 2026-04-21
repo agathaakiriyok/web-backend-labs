@@ -1,3 +1,4 @@
+import { ApiExcludeController } from '@nestjs/swagger';
 import {
   Controller,
   Get,
@@ -13,6 +14,7 @@ import { UserService } from './user.service';
 import { AuthGuard } from '../auth/auth.guard';
 import type { Request } from 'express';
 
+@ApiExcludeController()
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
