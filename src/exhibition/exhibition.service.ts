@@ -5,6 +5,13 @@ import { PrismaService } from '../prisma.service';
 export class ExhibitionService {
   constructor(private prisma: PrismaService) {}
 
+  private withImage<T extends { id: number }>(exhibition: T) {
+    return {
+      ...exhibition,
+      image: `/img/${exhibition.id}.jpg`,
+    };
+  }
+
   async findAll() {
     let exhibitions = await this.prisma.exhibition.findMany({ include: { hall: true } });
     if (exhibitions.length === 0) {
@@ -58,14 +65,16 @@ export class ExhibitionService {
       });
       exhibitions = await this.prisma.exhibition.findMany({ include: { hall: true } });
     }
-    return exhibitions;
+    return exhibitions.map((exhibition) => this.withImage(exhibition));
   }
 
-  findOne(id: number) {
-    return this.prisma.exhibition.findUnique({
+  async findOne(id: number) {
+    const exhibition = await this.prisma.exhibition.findUnique({
       where: { id },
       include: { hall: true },
     });
+
+    return exhibition ? this.withImage(exhibition) : null;
   }
 
   create(data: { name: string; description: string; dateStart: string; dateEnd: string; hallId: number }) {
