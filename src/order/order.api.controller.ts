@@ -15,6 +15,7 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { OrderResponseDto } from './dto/order-response.dto';
 import { OrderItemResponseDto } from './dto/order-item-response.dto';
 import { AuthGuard } from '../auth/auth.guard';
+import { CacheControl } from '../common/decorators/cache-control.decorator';
 
 @ApiTags('orders')
 @Controller('api/orders')
@@ -25,9 +26,14 @@ export class OrderApiController {
   ) {}
 
   @Get()
+  @CacheControl('private, max-age=60')
   @ApiOperation({ summary: 'Получить все заказы (с пагинацией)' })
   @ApiOkResponse({ type: [OrderResponseDto], description: 'Список заказов' })
-  async findAll(@Query() pagination: PaginationDto, @Req() req: Request, @Res() res: Response) {
+  async findAll(
+    @Query() pagination: PaginationDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const page = pagination.page ?? 1;
     const limit = pagination.limit ?? 10;
     const all = await this.orderService.findAll();
@@ -35,10 +41,11 @@ export class OrderApiController {
     const data = all.slice((page - 1) * limit, page * limit);
     res.setHeader('X-Total-Count', total);
     res.setHeader('Link', buildLinkHeader(req, page, limit, total, 3001));
-    return res.json(data);
+    return data;
   }
 
   @Get(':id')
+  @CacheControl('private, max-age=60')
   @ApiOperation({ summary: 'Получить заказ по ID' })
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: OrderResponseDto, description: 'Заказ найден' })
@@ -50,11 +57,17 @@ export class OrderApiController {
   }
 
   @Get(':id/items')
+  @CacheControl('private, max-age=60')
   @ApiOperation({ summary: 'Получить позиции заказа' })
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: [OrderItemResponseDto], description: 'Список позиций заказа' })
   @ApiNotFoundResponse({ description: 'Заказ не найден' })
-  async findItems(@Param('id', ParseIntPipe) id: number, @Query() pagination: PaginationDto, @Req() req: Request, @Res() res: Response) {
+  async findItems(
+    @Param('id', ParseIntPipe) id: number,
+    @Query() pagination: PaginationDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const order = await this.orderService.findOne(id);
     if (!order) throw new NotFoundException(`Заказ #${id} не найден`);
     const all = await this.prisma.orderItem.findMany({
@@ -66,7 +79,7 @@ export class OrderApiController {
     const data = all.slice((page - 1) * limit, page * limit);
     res.setHeader('X-Total-Count', all.length);
     res.setHeader('Link', buildLinkHeader(req, page, limit, all.length, 3001));
-    return res.json(data);
+    return data;
   }
 
   @Post()
