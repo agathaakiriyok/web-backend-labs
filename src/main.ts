@@ -15,6 +15,12 @@ dotenv.config({ path: join(process.cwd(), '.env') });
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+  app.use((_req: any, res: any, next: any) => {
+    res.setHeader('Access-Control-Allow-Private-Network', 'true');
+    next();
+  });
+  app.enableCors({ origin: true, credentials: true });
+
   const root = process.cwd();
   app.useStaticAssets(join(root, 'public'));
   app.setBaseViewsDir(join(root, 'views'));

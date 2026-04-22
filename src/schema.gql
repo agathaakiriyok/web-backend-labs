@@ -1,0 +1,354 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input CreateExhibitionInput {
+  """Дата окончания (ISO 8601, например 2026-09-01)"""
+  dateEnd: String!
+
+  """Дата начала (ISO 8601, например 2026-06-01)"""
+  dateStart: String!
+
+  """Описание выставки"""
+  description: String
+
+  """Идентификатор зала"""
+  hallId: Int!
+
+  """Название выставки"""
+  name: String!
+}
+
+input CreateFeedbackInput {
+  """Текст отзыва"""
+  text: String!
+
+  """Идентификатор пользователя"""
+  userId: Int!
+}
+
+input CreateHallInput {
+  """Вместимость зала"""
+  capacity: Int!
+
+  """Название зала"""
+  name: String!
+}
+
+input CreateOrderInput {
+  """Идентификатор выставки"""
+  exhibitionId: Int!
+
+  """Количество билетов"""
+  quantity: Int! = 1
+
+  """Цена за один билет"""
+  unitPrice: Float!
+
+  """Идентификатор пользователя"""
+  userId: Int!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type ExhibitionType {
+  """Дата окончания выставки"""
+  dateEnd: DateTime!
+
+  """Дата начала выставки"""
+  dateStart: DateTime!
+
+  """Описание выставки"""
+  description: String
+
+  """Зал, в котором проходит выставка"""
+  hall: HallType
+
+  """Идентификатор зала"""
+  hallId: Int!
+
+  """Идентификатор выставки"""
+  id: Int!
+
+  """Путь к изображению выставки"""
+  image: String
+
+  """Название выставки"""
+  name: String!
+}
+
+type FeedbackType {
+  """Дата создания отзыва"""
+  createdAt: DateTime!
+
+  """Идентификатор отзыва"""
+  id: Int!
+
+  """Текст отзыва"""
+  text: String!
+
+  """Автор отзыва"""
+  user: UserType
+
+  """Идентификатор автора отзыва"""
+  userId: Int!
+}
+
+type HallType {
+  """Вместимость зала (количество посетителей)"""
+  capacity: Int!
+
+  """Выставки в данном зале"""
+  exhibitions(
+    """Количество элементов на странице"""
+    limit: Int! = 10
+
+    """Номер страницы"""
+    page: Int! = 1
+  ): [ExhibitionType!]!
+
+  """Идентификатор зала"""
+  id: Int!
+
+  """Название зала"""
+  name: String!
+}
+
+type Mutation {
+  """Отменить заказ"""
+  cancelOrder(id: Int!): OrderType!
+
+  """Создать новую выставку"""
+  createExhibition(input: CreateExhibitionInput!): ExhibitionType!
+
+  """Оставить отзыв"""
+  createFeedback(input: CreateFeedbackInput!): FeedbackType!
+
+  """Создать новый зал"""
+  createHall(input: CreateHallInput!): HallType!
+
+  """Создать новый заказ (покупка билетов)"""
+  createOrder(input: CreateOrderInput!): OrderType!
+
+  """Удалить выставку"""
+  deleteExhibition(id: Int!): Boolean!
+
+  """Удалить отзыв"""
+  deleteFeedback(id: Int!): Boolean!
+
+  """Удалить зал"""
+  deleteHall(id: Int!): Boolean!
+
+  """Удалить заказ"""
+  deleteOrder(id: Int!): Boolean!
+
+  """Оплатить заказ"""
+  payOrder(id: Int!): OrderType!
+
+  """Обновить данные выставки"""
+  updateExhibition(id: Int!, input: UpdateExhibitionInput!): ExhibitionType!
+
+  """Обновить текст отзыва"""
+  updateFeedback(id: Int!, input: UpdateFeedbackInput!): FeedbackType!
+
+  """Обновить зал"""
+  updateHall(id: Int!, input: UpdateHallInput!): HallType!
+}
+
+type OrderItemType {
+  """Идентификатор выставки"""
+  exhibitionId: Int!
+
+  """Идентификатор зала"""
+  hallId: Int!
+
+  """Идентификатор позиции заказа"""
+  id: Int!
+
+  """Идентификатор заказа"""
+  orderId: Int!
+
+  """Количество билетов"""
+  quantity: Int!
+
+  """Цена за один билет"""
+  unitPrice: Float!
+}
+
+"""Статус заказа"""
+enum OrderStatus {
+  """Отменён"""
+  CANCELLED
+
+  """Оплачен"""
+  PAID
+
+  """Ожидает оплаты"""
+  PENDING
+}
+
+type OrderType {
+  """Дата создания заказа"""
+  createdAt: DateTime!
+
+  """Идентификатор заказа"""
+  id: Int!
+
+  """Позиции заказа"""
+  items(
+    """Количество элементов на странице"""
+    limit: Int! = 10
+
+    """Номер страницы"""
+    page: Int! = 1
+  ): [OrderItemType!]!
+
+  """Статус заказа"""
+  status: OrderStatus!
+
+  """Итоговая сумма заказа"""
+  totalPrice: Float!
+
+  """Пользователь, создавший заказ"""
+  user: UserType
+
+  """Идентификатор пользователя"""
+  userId: Int!
+}
+
+type Query {
+  """Получить выставку по идентификатору"""
+  exhibition(id: Int!): ExhibitionType
+
+  """Получить список всех выставок"""
+  exhibitions(
+    """Количество элементов на странице"""
+    limit: Int! = 10
+
+    """Номер страницы"""
+    page: Int! = 1
+  ): [ExhibitionType!]!
+
+  """Получить отзыв по идентификатору"""
+  feedback(id: Int!): FeedbackType
+
+  """Получить список всех отзывов"""
+  feedbacks(
+    """Количество элементов на странице"""
+    limit: Int! = 10
+
+    """Номер страницы"""
+    page: Int! = 1
+  ): [FeedbackType!]!
+
+  """Получить зал по идентификатору"""
+  hall(id: Int!): HallType
+
+  """Получить список всех залов"""
+  halls(
+    """Количество элементов на странице"""
+    limit: Int! = 10
+
+    """Номер страницы"""
+    page: Int! = 1
+  ): [HallType!]!
+
+  """Получить заказ по идентификатору"""
+  order(id: Int!): OrderType
+
+  """Получить список всех заказов"""
+  orders(
+    """Количество элементов на странице"""
+    limit: Int! = 10
+
+    """Номер страницы"""
+    page: Int! = 1
+  ): [OrderType!]!
+
+  """Получить заказы пользователя"""
+  ordersByUser(
+    """Количество элементов на странице"""
+    limit: Int! = 10
+
+    """Номер страницы"""
+    page: Int! = 1
+    userId: Int!
+  ): [OrderType!]!
+
+  """Получить пользователя по идентификатору"""
+  user(id: Int!): UserType
+
+  """Получить список всех пользователей"""
+  users(
+    """Количество элементов на странице"""
+    limit: Int! = 10
+
+    """Номер страницы"""
+    page: Int! = 1
+  ): [UserType!]!
+}
+
+input UpdateExhibitionInput {
+  """Новая дата окончания (ISO 8601)"""
+  dateEnd: String
+
+  """Новая дата начала (ISO 8601)"""
+  dateStart: String
+
+  """Новое описание выставки"""
+  description: String
+
+  """Новый идентификатор зала"""
+  hallId: Int
+
+  """Новое название выставки"""
+  name: String
+}
+
+input UpdateFeedbackInput {
+  """Новый текст отзыва"""
+  text: String!
+}
+
+input UpdateHallInput {
+  """Новая вместимость зала"""
+  capacity: Int
+
+  """Новое название зала"""
+  name: String
+}
+
+type UserType {
+  """Дата регистрации"""
+  createdAt: DateTime!
+
+  """Email пользователя"""
+  email: String!
+
+  """Отзывы пользователя"""
+  feedbacks(
+    """Количество элементов на странице"""
+    limit: Int! = 10
+
+    """Номер страницы"""
+    page: Int! = 1
+  ): [FeedbackType!]!
+
+  """Идентификатор пользователя"""
+  id: Int!
+
+  """Имя пользователя"""
+  name: String!
+
+  """Заказы пользователя"""
+  orders(
+    """Количество элементов на странице"""
+    limit: Int! = 10
+
+    """Номер страницы"""
+    page: Int! = 1
+  ): [OrderType!]!
+}
