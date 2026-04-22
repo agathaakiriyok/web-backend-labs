@@ -1,9 +1,9 @@
 import {
   Body, Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException,
-  Param, ParseIntPipe, Patch, Post, Query, Req, Res,
+  Param, ParseIntPipe, Patch, Post, Query, Req, Res, UseGuards,
 } from '@nestjs/common';
 import {
-  ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiOperation,
+  ApiBody, ApiCookieAuth, ApiNotFoundResponse, ApiOkResponse, ApiOperation,
   ApiParam, ApiResponse, ApiTags,
 } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
@@ -14,6 +14,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 import { FeedbackResponseDto } from '../feedback/dto/feedback-response.dto';
 import { OrderResponseDto } from '../order/dto/order-response.dto';
+import { AuthGuard } from '../auth/auth.guard';
 
 @ApiTags('users')
 @Controller('api/users')
@@ -81,21 +82,27 @@ export class UserApiController {
   }
 
   @Post()
+  @UseGuards(AuthGuard)
+  @ApiCookieAuth('connect.sid')
   @ApiOperation({ summary: 'Создать пользователя' })
   @ApiBody({ type: CreateUserDto })
   @ApiResponse({ status: 201, type: UserResponseDto, description: 'Пользователь создан' })
   @ApiResponse({ status: 400, description: 'Некорректные данные' })
+  @ApiResponse({ status: 401, description: 'Требуется авторизация' })
   @ApiResponse({ status: 409, description: 'Пользователь с таким email уже существует' })
   async create(@Body() dto: CreateUserDto) {
     return this.userService.create(dto);
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard)
+  @ApiCookieAuth('connect.sid')
   @ApiOperation({ summary: 'Обновить пользователя' })
   @ApiParam({ name: 'id', type: Number })
   @ApiBody({ type: UpdateUserDto })
   @ApiOkResponse({ type: UserResponseDto, description: 'Обновлённый пользователь' })
   @ApiNotFoundResponse({ description: 'Пользователь не найден' })
+  @ApiResponse({ status: 401, description: 'Требуется авторизация' })
   async update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateUserDto) {
     const user = await this.userService.findOne(id);
     if (!user) throw new NotFoundException(`Пользователь #${id} не найден`);
@@ -104,9 +111,12 @@ export class UserApiController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(AuthGuard)
+  @ApiCookieAuth('connect.sid')
   @ApiOperation({ summary: 'Удалить пользователя' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 204, description: 'Пользователь удалён' })
+  @ApiResponse({ status: 401, description: 'Требуется авторизация' })
   @ApiNotFoundResponse({ description: 'Пользователь не найден' })
   async remove(@Param('id', ParseIntPipe) id: number) {
     const user = await this.userService.findOne(id);

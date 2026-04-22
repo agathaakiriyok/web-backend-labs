@@ -19,7 +19,19 @@ async function bootstrap() {
     res.setHeader('Access-Control-Allow-Private-Network', 'true');
     next();
   });
-  app.enableCors({ origin: true, credentials: true });
+
+  app.enableCors({
+    origin: process.env.ALLOWED_ORIGIN || true,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Requested-With',
+      'Accept',
+      'Origin',
+    ],
+  });
 
   const root = process.cwd();
   app.useStaticAssets(join(root, 'public'));
@@ -31,9 +43,13 @@ async function bootstrap() {
 
   app.use(
     session({
-      secret: 'simple-secret-key',
+      secret: process.env.SESSION_SECRET || 'fallback-secret-change-in-production',
       resave: false,
       saveUninitialized: false,
+      cookie: {
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000,
+      },
     }),
   );
 
@@ -56,6 +72,12 @@ async function bootstrap() {
     .addTag('exhibitions', 'Выставки')
     .addTag('orders', 'Заказы (билеты)')
     .addTag('feedback', 'Отзывы')
+    .addCookieAuth('connect.sid', {
+      type: 'apiKey',
+      in: 'cookie',
+      name: 'connect.sid',
+      description: 'Session cookie. Войдите через /auth/login чтобы получить сессионный cookie.',
+    })
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);

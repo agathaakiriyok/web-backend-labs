@@ -30,14 +30,9 @@ export class ExhibitionController {
     private readonly prisma: PrismaService,
   ) {}
 
-  private isAdmin(username?: string) {
-    return username === 'Агата';
-  }
-
   private session(req: Request) {
     const s = (req as any).session;
-    const isAdmin = this.isAdmin(s?.username);
-    return { isAuth: !!s?.userId, username: s?.username, isAdmin };
+    return { isAuth: !!s?.userId, username: s?.username, isAdmin: s?.role === 'ADMIN' };
   }
 
   private fmtDate(d: Date) {

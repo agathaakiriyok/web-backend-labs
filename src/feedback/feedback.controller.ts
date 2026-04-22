@@ -37,7 +37,7 @@ export class FeedbackController {
   async findAll(@Req() req: Request) {
     const s = (req as any).session;
     const currentUserId: number | null = s?.userId ?? null;
-    const isAdmin = s?.username === 'Агата';
+    const isAdmin = s?.role === 'ADMIN';
 
     const raw = await this.feedbackService.findAll();
     const feedbacks = raw.map((fb) => ({
@@ -88,7 +88,7 @@ export class FeedbackController {
     const s = (req as any).session;
     const feedback = await this.feedbackService.findOne(Number(id));
 
-    if (!feedback || (feedback.userId !== s.userId && s.username !== 'Агата')) {
+    if (!feedback || (feedback.userId !== s.userId && s.role !== 'ADMIN')) {
       throw new ForbiddenException('Нет доступа');
     }
 
@@ -96,7 +96,7 @@ export class FeedbackController {
       feedback,
       isAuth: !!s?.userId,
       username: s?.username,
-      isAdmin: s?.username === 'Агата',
+      isAdmin: s?.role === 'ADMIN',
     };
   }
 
@@ -111,7 +111,7 @@ export class FeedbackController {
     const s = (req as any).session;
     const feedback = await this.feedbackService.findOne(Number(id));
 
-    if (!feedback || (feedback.userId !== s.userId && s.username !== 'Агата')) {
+    if (!feedback || (feedback.userId !== s.userId && s.role !== 'ADMIN')) {
       throw new ForbiddenException('Нет доступа');
     }
 
@@ -137,7 +137,7 @@ export class FeedbackController {
     const s = (req as any).session;
     const feedback = await this.feedbackService.findOne(Number(id));
 
-    if (!feedback || (feedback.userId !== s.userId && s.username !== 'Агата')) {
+    if (!feedback || (feedback.userId !== s.userId && s.role !== 'ADMIN')) {
       throw new ForbiddenException('Нет доступа');
     }
 

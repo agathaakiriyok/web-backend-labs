@@ -5,9 +5,9 @@ export class AdminGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const req = context.switchToHttp().getRequest();
     const res = context.switchToHttp().getResponse();
-    const username = (req.session as any)?.username;
+    const role = (req.session as any)?.role;
 
-    if (username !== 'Агата') {
+    if (role !== 'ADMIN') {
       res.redirect('/exhibitions');
       return false;
     }

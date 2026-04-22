@@ -1,9 +1,9 @@
 import {
   Body, Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException,
-  Param, ParseIntPipe, Patch, Post, Query, Req, Res,
+  Param, ParseIntPipe, Patch, Post, Query, Req, Res, UseGuards,
 } from '@nestjs/common';
 import {
-  ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiOperation,
+  ApiBody, ApiCookieAuth, ApiNotFoundResponse, ApiOkResponse, ApiOperation,
   ApiParam, ApiResponse, ApiTags,
 } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
@@ -13,6 +13,7 @@ import { CreateHallDto } from './dto/create-hall.dto';
 import { UpdateHallDto } from './dto/update-hall.dto';
 import { HallResponseDto } from './dto/hall-response.dto';
 import { ExhibitionResponseDto } from '../exhibition/dto/exhibition-response.dto';
+import { AuthGuard } from '../auth/auth.guard';
 
 @ApiTags('halls')
 @Controller('api/halls')
@@ -62,20 +63,26 @@ export class HallApiController {
   }
 
   @Post()
+  @UseGuards(AuthGuard)
+  @ApiCookieAuth('connect.sid')
   @ApiOperation({ summary: 'Создать зал' })
   @ApiBody({ type: CreateHallDto })
   @ApiResponse({ status: 201, type: HallResponseDto, description: 'Зал создан' })
   @ApiResponse({ status: 400, description: 'Некорректные данные' })
+  @ApiResponse({ status: 401, description: 'Требуется авторизация' })
   async create(@Body() dto: CreateHallDto) {
     return this.hallService.create(dto);
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard)
+  @ApiCookieAuth('connect.sid')
   @ApiOperation({ summary: 'Обновить зал' })
   @ApiParam({ name: 'id', type: Number })
   @ApiBody({ type: UpdateHallDto })
   @ApiOkResponse({ type: HallResponseDto, description: 'Обновлённый зал' })
   @ApiNotFoundResponse({ description: 'Зал не найден' })
+  @ApiResponse({ status: 401, description: 'Требуется авторизация' })
   async update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateHallDto) {
     const hall = await this.hallService.findOne(id);
     if (!hall) throw new NotFoundException(`Зал #${id} не найден`);
@@ -84,9 +91,12 @@ export class HallApiController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(AuthGuard)
+  @ApiCookieAuth('connect.sid')
   @ApiOperation({ summary: 'Удалить зал' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 204, description: 'Зал удалён' })
+  @ApiResponse({ status: 401, description: 'Требуется авторизация' })
   @ApiResponse({ status: 409, description: 'Зал используется выставками' })
   @ApiNotFoundResponse({ description: 'Зал не найден' })
   async remove(@Param('id', ParseIntPipe) id: number) {

@@ -23,7 +23,9 @@ import { UserModule } from './user/user.module';
       introspection: true,
     }),
     PrismaModule,
-    AuthModule,
+    AuthModule.forRoot({
+      sessionSecret: process.env.SESSION_SECRET || 'fallback-secret-change-in-production',
+    }),
     ExhibitionModule,
     HallModule,
     OrderModule,
