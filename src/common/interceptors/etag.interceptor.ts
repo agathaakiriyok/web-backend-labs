@@ -4,8 +4,8 @@ import {
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, EMPTY, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { createHash } from 'crypto';
 import type { Request, Response } from 'express';
 
@@ -23,8 +23,8 @@ export class ETagInterceptor implements NestInterceptor {
     }
 
     return next.handle().pipe(
-      map((data) => {
-        if (data == null || res.headersSent) return data;
+      switchMap((data) => {
+        if (data == null || res.headersSent) return of(data);
 
         const body = JSON.stringify(data);
         const etag = `"${createHash('sha256').update(body).digest('hex').slice(0, 27)}"`;
@@ -33,10 +33,10 @@ export class ETagInterceptor implements NestInterceptor {
 
         if (req.headers['if-none-match'] === etag) {
           res.status(304).end();
-          return null;
+          return EMPTY;
         }
 
-        return data;
+        return of(data);
       }),
     );
   }
