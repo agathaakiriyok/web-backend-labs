@@ -35,9 +35,9 @@ export class FeedbackController {
   @Get()
   @Render('feedback')
   async findAll(@Req() req: Request) {
-    const s = (req as any).session;
-    const currentUserId: number | null = s?.userId ?? null;
-    const isAdmin = s?.role === 'ADMIN';
+    const info = (req as any).authInfo ?? {};
+    const currentUserId: number | null = info.userId ?? null;
+    const isAdmin: boolean = info.isAdmin ?? false;
 
     const raw = await this.feedbackService.findAll();
     const feedbacks = raw.map((fb) => ({
@@ -48,8 +48,8 @@ export class FeedbackController {
 
     return {
       feedbacks,
-      isAuth: !!currentUserId,
-      username: s?.username,
+      isAuth: info.isAuth ?? false,
+      username: info.username,
       userId: currentUserId,
       isAdmin,
     };
@@ -62,8 +62,8 @@ export class FeedbackController {
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    const s = (req as any).session;
-    const feedback = await this.feedbackService.create(s.userId, body.message);
+    const info = (req as any).authInfo ?? {};
+    const feedback = await this.feedbackService.create(info.userId, body.message);
 
     feedbackEvents.next(
       JSON.stringify({
@@ -85,18 +85,18 @@ export class FeedbackController {
   @UseGuards(AuthGuard)
   @Render('feedback/edit')
   async editForm(@Param('id') id: string, @Req() req: Request) {
-    const s = (req as any).session;
+    const info = (req as any).authInfo ?? {};
     const feedback = await this.feedbackService.findOne(Number(id));
 
-    if (!feedback || (feedback.userId !== s.userId && s.role !== 'ADMIN')) {
+    if (!feedback || (feedback.userId !== info.userId && !info.isAdmin)) {
       throw new ForbiddenException('Нет доступа');
     }
 
     return {
       feedback,
-      isAuth: !!s?.userId,
-      username: s?.username,
-      isAdmin: s?.role === 'ADMIN',
+      isAuth: info.isAuth ?? false,
+      username: info.username,
+      isAdmin: info.isAdmin ?? false,
     };
   }
 
@@ -108,10 +108,10 @@ export class FeedbackController {
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    const s = (req as any).session;
+    const info = (req as any).authInfo ?? {};
     const feedback = await this.feedbackService.findOne(Number(id));
 
-    if (!feedback || (feedback.userId !== s.userId && s.role !== 'ADMIN')) {
+    if (!feedback || (feedback.userId !== info.userId && !info.isAdmin)) {
       throw new ForbiddenException('Нет доступа');
     }
 
@@ -134,10 +134,10 @@ export class FeedbackController {
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    const s = (req as any).session;
+    const info = (req as any).authInfo ?? {};
     const feedback = await this.feedbackService.findOne(Number(id));
 
-    if (!feedback || (feedback.userId !== s.userId && s.role !== 'ADMIN')) {
+    if (!feedback || (feedback.userId !== info.userId && !info.isAdmin)) {
       throw new ForbiddenException('Нет доступа');
     }
 

@@ -28,11 +28,11 @@ export class UserService {
     });
   }
 
-  create(data: { name: string; email: string; password: string }) {
+  create(data: { name: string; email: string }) {
     return this.prisma.user.create({ data });
   }
 
-  update(id: number, data: { name?: string; email?: string; password?: string }) {
+  update(id: number, data: { name?: string; email?: string }) {
     return this.prisma.user.update({ where: { id }, data });
   }
 

@@ -7,11 +7,11 @@ import type { Request } from 'express';
 @Controller()
 export class AppController {
   private session(req: Request) {
-    const s = (req as any).session;
+    const s = (req as any).authInfo;
     return {
-      isAuth: !!s?.userId,
+      isAuth: !!s?.isAuth,
       username: s?.username,
-      isAdmin: s?.role === 'ADMIN',
+      isAdmin: s?.isAdmin,
     };
   }
 

@@ -1,6 +1,5 @@
 import { ApiExcludeController } from '@nestjs/swagger';
 import {
-  Body,
   Controller,
   Get,
   Post,
@@ -23,17 +22,13 @@ export class AuthController {
   }
 
   @Post('login')
-  async login(@Body() body: any, @Req() req: Request, @Res() res: Response) {
-    const user = await this.authService.login(body.name, body.password);
+  async login(@Req() req: Request, @Res() res: Response) {
+    const body: any = req.body ?? {};
+    const user = await this.authService.login(body.email, body.password, res);
 
     if (!user) {
       return res.render('auth/login', { error: true, isAuth: false });
     }
-
-    const s = (req as any).session;
-    s.userId = user.id;
-    s.username = user.name;
-    s.role = user.role;
 
     return res.redirect('/exhibitions');
   }
@@ -45,7 +40,8 @@ export class AuthController {
   }
 
   @Post('register')
-  async register(@Body() body: any, @Req() req: Request, @Res() res: Response) {
+  async register(@Req() req: Request, @Res() res: Response) {
+    const body: any = req.body ?? {};
     if (!body.name || !body.email || !body.password) {
       return res.render('auth/register', {
         error: 'Заполните все поля',
@@ -53,38 +49,30 @@ export class AuthController {
       });
     }
 
-    const user = await this.authService.register(body.name, body.email, body.password);
+    const result = await this.authService.register(body.name, body.email, body.password, res);
 
-    if (!user) {
-      return res.render('auth/register', {
-        error: 'Пользователь с таким именем или email уже существует',
-        isAuth: false,
-      });
+    if (!result || 'error' in result) {
+      const msg =
+        result?.error === 'exists'
+          ? 'Пользователь с таким email уже зарегистрирован'
+          : result?.error === 'weak_password'
+            ? 'Пароль слишком короткий — минимум 6 символов'
+            : 'Ошибка регистрации. Проверьте данные и попробуйте снова';
+      return res.render('auth/register', { error: msg, isAuth: false });
     }
-
-    const s = (req as any).session;
-    s.userId = user.id;
-    s.username = user.name;
-    s.role = user.role;
 
     return res.redirect('/exhibitions');
   }
 
   @Get('logout')
-  async logoutGet(@Req() req: Request, @Res() res: Response) {
-    return this.doLogout(req, res);
+  logoutGet(@Req() req: Request, @Res() res: Response) {
+    this.authService.clearSessionCookie(res);
+    res.redirect('/auth/login');
   }
 
   @Post('logout')
-  async logoutPost(@Req() req: Request, @Res() res: Response) {
-    return this.doLogout(req, res);
-  }
-
-  private doLogout(req: Request, res: Response) {
-    const s = (req as any).session;
-    s.destroy((err: any) => {
-      if (err) return res.redirect('/exhibitions');
-      res.redirect('/auth/login');
-    });
+  logoutPost(@Req() req: Request, @Res() res: Response) {
+    this.authService.clearSessionCookie(res);
+    res.redirect('/auth/login');
   }
 }

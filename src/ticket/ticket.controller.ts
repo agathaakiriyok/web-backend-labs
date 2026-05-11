@@ -30,8 +30,8 @@ export class TicketController {
     @Query('error') error: string,
     @Req() req: Request,
   ) {
-    const s = (req as any).session;
-    const userOrders = s?.userId ? await this.orderService.findByUser(s.userId) : [];
+    const info = (req as any).authInfo ?? {};
+    const userOrders = info.userId ? await this.orderService.findByUser(info.userId) : [];
 
     const exhibition = exhibitionId
       ? await this.prisma.exhibition.findUnique({
@@ -44,16 +44,16 @@ export class TicketController {
       exhibition,
       userOrders,
       error: error === 'not_found' ? 'Выставка не найдена. Пожалуйста, выберите другую выставку.' : null,
-      isAuth: !!s?.userId,
-      username: s?.username,
-      isAdmin: s?.username === 'Агата',
+      isAuth: info.isAuth ?? false,
+      username: info.username,
+      isAdmin: info.isAdmin ?? false,
     };
   }
 
   @Post()
   @UseGuards(AuthGuard)
   async createOrder(@Body() body: any, @Req() req: Request, @Res() res: Response) {
-    const s = (req as any).session;
+    const info = (req as any).authInfo ?? {};
     const exhibitionId = Number(body.exhibitionId);
     const quantity = Number(body.quantity) || 1;
     const unitPrice = Number(body.unitPrice) || 500;
@@ -62,15 +62,12 @@ export class TicketController {
       return res.redirect('/exhibitions');
     }
 
-    const exhibition = await this.prisma.exhibition.findUnique({
-      where: { id: exhibitionId },
-    });
-
+    const exhibition = await this.prisma.exhibition.findUnique({ where: { id: exhibitionId } });
     if (!exhibition) {
-      return res.redirect(`/tickets?error=not_found`);
+      return res.redirect('/tickets?error=not_found');
     }
 
-    await this.orderService.create(s.userId, exhibitionId, quantity, unitPrice);
+    await this.orderService.create(info.userId, exhibitionId, quantity, unitPrice);
     return res.redirect('/tickets');
   }
 }

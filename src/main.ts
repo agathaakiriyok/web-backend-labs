@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import session from 'express-session';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import hbs from 'hbs';
@@ -9,11 +8,12 @@ import * as dotenv from 'dotenv';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter';
-
 dotenv.config({ path: join(process.cwd(), '.env') });
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  app.use(require('express').urlencoded({ extended: true }));
 
   app.use((_req: any, res: any, next: any) => {
     res.setHeader('Access-Control-Allow-Private-Network', 'true');
@@ -41,18 +41,6 @@ async function bootstrap() {
   hbs.registerPartials(join(root, 'views', 'partials'), { rename: (name) => name });
   hbs.registerHelper('eq', (left: unknown, right: unknown) => left === right);
 
-  app.use(
-    session({
-      secret: process.env.SESSION_SECRET || 'fallback-secret-change-in-production',
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-        httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000,
-      },
-    }),
-  );
-
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -72,11 +60,11 @@ async function bootstrap() {
     .addTag('exhibitions', 'Выставки')
     .addTag('orders', 'Заказы (билеты)')
     .addTag('feedback', 'Отзывы')
-    .addCookieAuth('connect.sid', {
+    .addCookieAuth('session', {
       type: 'apiKey',
       in: 'cookie',
-      name: 'connect.sid',
-      description: 'Session cookie. Войдите через /auth/login чтобы получить сессионный cookie.',
+      name: 'session',
+      description: 'Firebase session cookie. Войдите через /auth/login чтобы получить cookie.',
     })
     .build();
 

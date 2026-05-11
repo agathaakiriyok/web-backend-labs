@@ -16,9 +16,14 @@ export class RolesGuard implements CanActivate {
 
     const req = context.switchToHttp().getRequest();
     const res = context.switchToHttp().getResponse();
-    const role = (req.session as any)?.role;
+    const info = (req as any).authInfo ?? {};
 
-    if (!requiredRoles.includes(role)) {
+    if (!info.isAuth) {
+      res.redirect('/auth/login');
+      return false;
+    }
+
+    if (!requiredRoles.includes(info.role)) {
       res.redirect('/exhibitions');
       return false;
     }

@@ -64,7 +64,7 @@ export class HallApiController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @ApiCookieAuth('connect.sid')
+  @ApiCookieAuth('session')
   @ApiOperation({ summary: 'Создать зал' })
   @ApiBody({ type: CreateHallDto })
   @ApiResponse({ status: 201, type: HallResponseDto, description: 'Зал создан' })
@@ -76,7 +76,7 @@ export class HallApiController {
 
   @Patch(':id')
   @UseGuards(AuthGuard)
-  @ApiCookieAuth('connect.sid')
+  @ApiCookieAuth('session')
   @ApiOperation({ summary: 'Обновить зал' })
   @ApiParam({ name: 'id', type: Number })
   @ApiBody({ type: UpdateHallDto })
@@ -92,7 +92,7 @@ export class HallApiController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
-  @ApiCookieAuth('connect.sid')
+  @ApiCookieAuth('session')
   @ApiOperation({ summary: 'Удалить зал' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 204, description: 'Зал удалён' })

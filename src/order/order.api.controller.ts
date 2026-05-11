@@ -71,7 +71,7 @@ export class OrderApiController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @ApiCookieAuth('connect.sid')
+  @ApiCookieAuth('session')
   @ApiOperation({ summary: 'Создать заказ (купить билет)' })
   @ApiBody({ type: CreateOrderDto })
   @ApiResponse({ status: 201, type: OrderResponseDto, description: 'Заказ создан' })
@@ -79,16 +79,15 @@ export class OrderApiController {
   @ApiResponse({ status: 401, description: 'Требуется авторизация' })
   @ApiResponse({ status: 404, description: 'Выставка не найдена' })
   async create(@Body() dto: CreateOrderDto, @Req() req: Request) {
-    const s = (req as any).session;
-    const userId: number = s?.userId ?? 1;
+    const info = (req as any).authInfo ?? {};
     const exhibition = await this.prisma.exhibition.findUnique({ where: { id: dto.exhibitionId } });
     if (!exhibition) throw new NotFoundException(`Выставка #${dto.exhibitionId} не найдена`);
-    return this.orderService.create(userId, dto.exhibitionId, dto.quantity, dto.unitPrice);
+    return this.orderService.create(info.userId, dto.exhibitionId, dto.quantity, dto.unitPrice);
   }
 
   @Patch(':id')
   @UseGuards(AuthGuard)
-  @ApiCookieAuth('connect.sid')
+  @ApiCookieAuth('session')
   @ApiOperation({ summary: 'Обновить статус заказа' })
   @ApiParam({ name: 'id', type: Number })
   @ApiBody({ type: UpdateOrderDto })
@@ -104,7 +103,7 @@ export class OrderApiController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
-  @ApiCookieAuth('connect.sid')
+  @ApiCookieAuth('session')
   @ApiOperation({ summary: 'Удалить заказ' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 204, description: 'Заказ удалён' })
