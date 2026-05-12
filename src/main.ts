@@ -8,6 +8,8 @@ import * as dotenv from 'dotenv';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter';
+import { TimingInterceptor } from './common/interceptors/timing.interceptor';
+import { ETagInterceptor } from './common/interceptors/etag.interceptor';
 dotenv.config({ path: join(process.cwd(), '.env') });
 
 async function bootstrap() {
@@ -31,6 +33,7 @@ async function bootstrap() {
       'Accept',
       'Origin',
     ],
+    exposedHeaders: ['X-Elapsed-Time', 'X-Total-Count', 'ETag', 'Link'],
   });
 
   const root = process.cwd();
@@ -51,6 +54,10 @@ async function bootstrap() {
 
   app.useGlobalFilters(new PrismaExceptionFilter(), new HttpExceptionFilter());
 
+  // TimingInterceptor is outermost — its map runs last (after ETag)
+  // ETagInterceptor is inner — it processes raw handler data first
+  app.useGlobalInterceptors(new TimingInterceptor(), new ETagInterceptor());
+
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Эрмитаж — REST API')
     .setDescription('RESTful API музея Эрмитаж: управление выставками, залами, заказами и отзывами')
@@ -70,7 +77,7 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api/docs', app, document, {
-    swaggerOptions: { persistAuthorization: true },
+    swaggerOptions: { persistAuthorization: true, withCredentials: true },
   });
 
   await app.listen(Number(process.env.PORT) || 3000);

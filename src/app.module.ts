@@ -11,6 +11,7 @@ import { ComplexityPlugin } from './graphql/complexity.plugin';
 import { HallModule } from './hall/hall.module';
 import { OrderModule } from './order/order.module';
 import { PrismaModule } from './prisma.module';
+import { StorageModule } from './storage/storage.module';
 import { TicketModule } from './ticket/ticket.module';
 import { UserModule } from './user/user.module';
 
@@ -24,6 +25,7 @@ import { UserModule } from './user/user.module';
       introspection: true,
     }),
     PrismaModule,
+    StorageModule,
     AuthModule.forRoot({
       projectId: process.env.FIREBASE_PROJECT_ID || '',
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL || '',

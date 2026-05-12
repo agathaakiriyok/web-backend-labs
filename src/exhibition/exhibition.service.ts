@@ -1,9 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import type { Cache } from 'cache-manager';
 import { PrismaService } from '../prisma.service';
+
+const CACHE_KEY = 'exhibitions:all';
+const CACHE_TTL_MS = 5000;
 
 @Injectable()
 export class ExhibitionService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
 
   private withImage<T extends { id: number }>(exhibition: T) {
     return {
@@ -13,6 +21,9 @@ export class ExhibitionService {
   }
 
   async findAll() {
+    const cached = await this.cacheManager.get<any[]>(CACHE_KEY);
+    if (cached) return cached;
+
     let exhibitions = await this.prisma.exhibition.findMany({ include: { hall: true } });
     if (exhibitions.length === 0) {
       // Seed data
@@ -61,7 +72,10 @@ export class ExhibitionService {
       });
       exhibitions = await this.prisma.exhibition.findMany({ include: { hall: true } });
     }
-    return exhibitions.map((exhibition) => this.withImage(exhibition));
+
+    const result = exhibitions.map((e) => this.withImage(e));
+    await this.cacheManager.set(CACHE_KEY, result, CACHE_TTL_MS);
+    return result;
   }
 
   async findOne(id: number) {
@@ -73,8 +87,8 @@ export class ExhibitionService {
     return exhibition ? this.withImage(exhibition) : null;
   }
 
-  create(data: { name: string; description: string; dateStart: string; dateEnd: string; hallId: number }) {
-    return this.prisma.exhibition.create({
+  async create(data: { name: string; description: string; dateStart: string; dateEnd: string; hallId: number }) {
+    const result = await this.prisma.exhibition.create({
       data: {
         name: data.name,
         description: data.description,
@@ -83,10 +97,12 @@ export class ExhibitionService {
         hallId: Number(data.hallId),
       },
     });
+    await this.cacheManager.del(CACHE_KEY);
+    return result;
   }
 
-  update(id: number, data: { name: string; description: string; dateStart: string; dateEnd: string; hallId: number }) {
-    return this.prisma.exhibition.update({
+  async update(id: number, data: { name: string; description: string; dateStart: string; dateEnd: string; hallId: number }) {
+    const result = await this.prisma.exhibition.update({
       where: { id },
       data: {
         name: data.name,
@@ -96,9 +112,13 @@ export class ExhibitionService {
         hallId: Number(data.hallId),
       },
     });
+    await this.cacheManager.del(CACHE_KEY);
+    return result;
   }
 
-  remove(id: number) {
-    return this.prisma.exhibition.delete({ where: { id } });
+  async remove(id: number) {
+    const result = await this.prisma.exhibition.delete({ where: { id } });
+    await this.cacheManager.del(CACHE_KEY);
+    return result;
   }
 }
