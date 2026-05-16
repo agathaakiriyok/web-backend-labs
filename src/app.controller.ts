@@ -11,7 +11,7 @@ export class AppController {
     return {
       isAuth: !!s?.userId,
       username: s?.username,
-      isAdmin: s?.username === 'Агата',
+      isAdmin: s?.role === 'ADMIN',
     };
   }
 

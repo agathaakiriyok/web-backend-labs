@@ -1,14 +1,29 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { IS_PUBLIC_KEY } from './decorators/public.decorator';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
+  constructor(private readonly reflector: Reflector) {}
+
   canActivate(context: ExecutionContext): boolean {
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
+    if (isPublic) return true;
+
     const req = context.switchToHttp().getRequest();
-    const res = context.switchToHttp().getResponse();
-    if (!(req.session as any).userId) {
-      res.redirect('/auth/login');
-      return false;
+    if (!(req.session as any)?.userId) {
+      throw new UnauthorizedException('Требуется авторизация');
     }
+
     return true;
   }
 }

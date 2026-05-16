@@ -24,7 +24,7 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() body: any, @Req() req: Request, @Res() res: Response) {
-    const user = await this.authService.login(body.name);
+    const user = await this.authService.login(body.name, body.password);
 
     if (!user) {
       return res.render('auth/login', { error: true, isAuth: false });
@@ -33,6 +33,7 @@ export class AuthController {
     const s = (req as any).session;
     s.userId = user.id;
     s.username = user.name;
+    s.role = user.role;
 
     return res.redirect('/exhibitions');
   }
@@ -64,6 +65,7 @@ export class AuthController {
     const s = (req as any).session;
     s.userId = user.id;
     s.username = user.name;
+    s.role = user.role;
 
     return res.redirect('/exhibitions');
   }

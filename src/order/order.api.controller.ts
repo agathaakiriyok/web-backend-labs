@@ -1,9 +1,9 @@
 import {
   Body, Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException,
-  Param, ParseIntPipe, Patch, Post, Query, Req, Res,
+  Param, ParseIntPipe, Patch, Post, Query, Req, Res, UseGuards,
 } from '@nestjs/common';
 import {
-  ApiBody, ApiNotFoundResponse, ApiOkResponse, ApiOperation,
+  ApiBody, ApiCookieAuth, ApiNotFoundResponse, ApiOkResponse, ApiOperation,
   ApiParam, ApiResponse, ApiTags,
 } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
@@ -14,6 +14,8 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { OrderResponseDto } from './dto/order-response.dto';
 import { OrderItemResponseDto } from './dto/order-item-response.dto';
+import { AuthGuard } from '../auth/auth.guard';
+import { CacheControl } from '../common/decorators/cache-control.decorator';
 
 @ApiTags('orders')
 @Controller('api/orders')
@@ -24,9 +26,14 @@ export class OrderApiController {
   ) {}
 
   @Get()
+  @CacheControl('private, max-age=60')
   @ApiOperation({ summary: 'Получить все заказы (с пагинацией)' })
   @ApiOkResponse({ type: [OrderResponseDto], description: 'Список заказов' })
-  async findAll(@Query() pagination: PaginationDto, @Req() req: Request, @Res() res: Response) {
+  async findAll(
+    @Query() pagination: PaginationDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const page = pagination.page ?? 1;
     const limit = pagination.limit ?? 10;
     const all = await this.orderService.findAll();
@@ -34,10 +41,11 @@ export class OrderApiController {
     const data = all.slice((page - 1) * limit, page * limit);
     res.setHeader('X-Total-Count', total);
     res.setHeader('Link', buildLinkHeader(req, page, limit, total, 3001));
-    return res.json(data);
+    return data;
   }
 
   @Get(':id')
+  @CacheControl('private, max-age=60')
   @ApiOperation({ summary: 'Получить заказ по ID' })
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: OrderResponseDto, description: 'Заказ найден' })
@@ -49,11 +57,17 @@ export class OrderApiController {
   }
 
   @Get(':id/items')
+  @CacheControl('private, max-age=60')
   @ApiOperation({ summary: 'Получить позиции заказа' })
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: [OrderItemResponseDto], description: 'Список позиций заказа' })
   @ApiNotFoundResponse({ description: 'Заказ не найден' })
-  async findItems(@Param('id', ParseIntPipe) id: number, @Query() pagination: PaginationDto, @Req() req: Request, @Res() res: Response) {
+  async findItems(
+    @Param('id', ParseIntPipe) id: number,
+    @Query() pagination: PaginationDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const order = await this.orderService.findOne(id);
     if (!order) throw new NotFoundException(`Заказ #${id} не найден`);
     const all = await this.prisma.orderItem.findMany({
@@ -65,14 +79,17 @@ export class OrderApiController {
     const data = all.slice((page - 1) * limit, page * limit);
     res.setHeader('X-Total-Count', all.length);
     res.setHeader('Link', buildLinkHeader(req, page, limit, all.length, 3001));
-    return res.json(data);
+    return data;
   }
 
   @Post()
+  @UseGuards(AuthGuard)
+  @ApiCookieAuth('connect.sid')
   @ApiOperation({ summary: 'Создать заказ (купить билет)' })
   @ApiBody({ type: CreateOrderDto })
   @ApiResponse({ status: 201, type: OrderResponseDto, description: 'Заказ создан' })
   @ApiResponse({ status: 400, description: 'Некорректные данные' })
+  @ApiResponse({ status: 401, description: 'Требуется авторизация' })
   @ApiResponse({ status: 404, description: 'Выставка не найдена' })
   async create(@Body() dto: CreateOrderDto, @Req() req: Request) {
     const s = (req as any).session;
@@ -83,11 +100,14 @@ export class OrderApiController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard)
+  @ApiCookieAuth('connect.sid')
   @ApiOperation({ summary: 'Обновить статус заказа' })
   @ApiParam({ name: 'id', type: Number })
   @ApiBody({ type: UpdateOrderDto })
   @ApiOkResponse({ type: OrderResponseDto, description: 'Обновлённый заказ' })
   @ApiNotFoundResponse({ description: 'Заказ не найден' })
+  @ApiResponse({ status: 401, description: 'Требуется авторизация' })
   async update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateOrderDto) {
     const order = await this.orderService.findOne(id);
     if (!order) throw new NotFoundException(`Заказ #${id} не найден`);
@@ -96,9 +116,12 @@ export class OrderApiController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(AuthGuard)
+  @ApiCookieAuth('connect.sid')
   @ApiOperation({ summary: 'Удалить заказ' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 204, description: 'Заказ удалён' })
+  @ApiResponse({ status: 401, description: 'Требуется авторизация' })
   @ApiNotFoundResponse({ description: 'Заказ не найден' })
   async remove(@Param('id', ParseIntPipe) id: number) {
     const order = await this.orderService.findOne(id);

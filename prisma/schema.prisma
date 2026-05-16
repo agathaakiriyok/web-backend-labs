@@ -12,6 +12,7 @@ model User {
   name      String
   email     String     @unique
   password  String
+  role      Role       @default(USER)
   createdAt DateTime   @default(now())
   feedbacks Feedback[]
   orders    Order[]
@@ -82,4 +83,9 @@ enum OrderStatus {
   PENDING
   PAID
   CANCELLED
+}
+
+enum Role {
+  USER
+  ADMIN
 }

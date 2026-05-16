@@ -21,11 +21,7 @@ export class UserController {
 
   private session(req: Request) {
     const s = (req as any).session;
-    return {
-      isAuth: !!s?.userId,
-      username: s?.username,
-      isAdmin: s?.username === 'Агата',
-    };
+    return { isAuth: !!s?.userId, username: s?.username, isAdmin: s?.role === 'ADMIN' };
   }
 
   @Get()

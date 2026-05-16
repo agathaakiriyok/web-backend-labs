@@ -16,7 +16,8 @@ describe('AppController', () => {
 
   describe('root', () => {
     it('should return index page data', () => {
-      const result = appController.getIndex();
+      const mockReq = { session: {} } as any;
+      const result = appController.getIndex(mockReq);
       expect(result).toHaveProperty('isAuth');
       expect(result).toHaveProperty('exhibitions');
     });
