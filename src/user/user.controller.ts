@@ -20,8 +20,8 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   private session(req: Request) {
-    const s = (req as any).session;
-    return { isAuth: !!s?.userId, username: s?.username, isAdmin: s?.role === 'ADMIN' };
+    const s = (req as any).authInfo;
+    return { isAuth: !!s?.isAuth, username: s?.username, isAdmin: s?.isAdmin };
   }
 
   @Get()

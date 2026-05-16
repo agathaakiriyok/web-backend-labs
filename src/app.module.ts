@@ -1,9 +1,10 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
+import { SessionContextMiddleware } from './auth/session-context.middleware';
 import { ExhibitionModule } from './exhibition/exhibition.module';
 import { FeedbackModule } from './feedback/feedback.module';
 import { ComplexityPlugin } from './graphql/complexity.plugin';
@@ -26,7 +27,10 @@ import { UserModule } from './user/user.module';
     PrismaModule,
     StorageModule,
     AuthModule.forRoot({
-      sessionSecret: process.env.SESSION_SECRET || 'fallback-secret-change-in-production',
+      projectId: process.env.FIREBASE_PROJECT_ID || '',
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL || '',
+      privateKey: process.env.FIREBASE_PRIVATE_KEY || '',
+      webApiKey: process.env.FIREBASE_WEB_API_KEY || '',
     }),
     ExhibitionModule,
     HallModule,
@@ -38,4 +42,8 @@ import { UserModule } from './user/user.module';
   controllers: [AppController],
   providers: [ComplexityPlugin],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(SessionContextMiddleware).forRoutes('*');
+  }
+}

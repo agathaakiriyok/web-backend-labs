@@ -20,7 +20,9 @@ export class AuthGuard implements CanActivate {
     if (isPublic) return true;
 
     const req = context.switchToHttp().getRequest();
-    if (!(req.session as any)?.userId) {
+    const info = (req as any).authInfo ?? {};
+
+    if (!info.isAuth) {
       throw new UnauthorizedException('Требуется авторизация');
     }
 

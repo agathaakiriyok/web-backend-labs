@@ -101,7 +101,7 @@ export class UserApiController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @ApiCookieAuth('connect.sid')
+  @ApiCookieAuth('session')
   @ApiOperation({ summary: 'Создать пользователя' })
   @ApiBody({ type: CreateUserDto })
   @ApiResponse({ status: 201, type: UserResponseDto, description: 'Пользователь создан' })
@@ -114,7 +114,7 @@ export class UserApiController {
 
   @Patch(':id')
   @UseGuards(AuthGuard)
-  @ApiCookieAuth('connect.sid')
+  @ApiCookieAuth('session')
   @ApiOperation({ summary: 'Обновить пользователя' })
   @ApiParam({ name: 'id', type: Number })
   @ApiBody({ type: UpdateUserDto })
@@ -130,7 +130,7 @@ export class UserApiController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
-  @ApiCookieAuth('connect.sid')
+  @ApiCookieAuth('session')
   @ApiOperation({ summary: 'Удалить пользователя' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 204, description: 'Пользователь удалён' })

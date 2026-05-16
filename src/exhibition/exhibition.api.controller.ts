@@ -89,7 +89,7 @@ export class ExhibitionApiController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @ApiCookieAuth('connect.sid')
+  @ApiCookieAuth('session')
   @ApiOperation({ summary: 'Создать выставку' })
   @ApiBody({ type: CreateExhibitionDto })
   @ApiResponse({ status: 201, type: ExhibitionResponseDto, description: 'Выставка создана' })
@@ -142,7 +142,7 @@ export class ExhibitionApiController {
 
   @Patch(':id')
   @UseGuards(AuthGuard)
-  @ApiCookieAuth('connect.sid')
+  @ApiCookieAuth('session')
   @ApiOperation({ summary: 'Обновить выставку' })
   @ApiParam({ name: 'id', type: Number })
   @ApiBody({ type: UpdateExhibitionDto })
@@ -158,7 +158,7 @@ export class ExhibitionApiController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
-  @ApiCookieAuth('connect.sid')
+  @ApiCookieAuth('session')
   @ApiOperation({ summary: 'Удалить выставку' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 204, description: 'Выставка удалена' })

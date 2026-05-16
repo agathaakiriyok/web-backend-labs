@@ -1,4 +1,6 @@
 export interface AuthModuleOptions {
-  sessionSecret: string;
-  sessionMaxAge?: number;
+  projectId: string;
+  clientEmail: string;
+  privateKey: string;
+  webApiKey: string;
 }

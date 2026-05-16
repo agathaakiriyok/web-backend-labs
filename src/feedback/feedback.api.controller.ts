@@ -53,21 +53,20 @@ export class FeedbackApiController {
 
   @Post()
   @UseGuards(AuthGuard)
-  @ApiCookieAuth('connect.sid')
+  @ApiCookieAuth('session')
   @ApiOperation({ summary: 'Создать отзыв' })
   @ApiBody({ type: CreateFeedbackDto })
   @ApiResponse({ status: 201, type: FeedbackResponseDto, description: 'Отзыв создан' })
   @ApiResponse({ status: 400, description: 'Некорректные данные' })
   @ApiResponse({ status: 401, description: 'Требуется авторизация' })
   async create(@Body() dto: CreateFeedbackDto, @Req() req: Request) {
-    const s = (req as any).session;
-    const userId: number = s?.userId ?? 1;
-    return this.feedbackService.create(userId, dto.text);
+    const info = (req as any).authInfo ?? {};
+    return this.feedbackService.create(info.userId, dto.text);
   }
 
   @Patch(':id')
   @UseGuards(AuthGuard)
-  @ApiCookieAuth('connect.sid')
+  @ApiCookieAuth('session')
   @ApiOperation({ summary: 'Обновить отзыв' })
   @ApiParam({ name: 'id', type: Number })
   @ApiBody({ type: UpdateFeedbackDto })
@@ -83,7 +82,7 @@ export class FeedbackApiController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
-  @ApiCookieAuth('connect.sid')
+  @ApiCookieAuth('session')
   @ApiOperation({ summary: 'Удалить отзыв' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 204, description: 'Отзыв удалён' })
