@@ -50,7 +50,6 @@ export class TimingInterceptor implements NestInterceptor {
           return data;
         }
 
-        // Page rendering: inject server elapsed time into Handlebars template context
         if (data && typeof data === 'object' && !Buffer.isBuffer(data)) {
           return { ...data, serverElapsedTime: elapsed };
         }

@@ -2,23 +2,5 @@
     <div class="wrapper">
         <p>© 2025 Государственный Эрмитаж</p>
         <p>Дворцовая площадь, 2, Санкт-Петербург</p>
-        {{#if serverElapsedTime}}
-        <p class="perf-info">
-            Сервер: <strong>{{serverElapsedTime}} мс</strong>
-            &nbsp;|&nbsp;
-            Клиент: <strong id="client-elapsed">—</strong>
-        </p>
-        {{/if}}
     </div>
 </footer>
-
-<script>
-(function () {
-    var el = document.getElementById('client-elapsed');
-    if (!el) return;
-    var nav = performance.getEntriesByType('navigation')[0];
-    if (nav) {
-        el.textContent = Math.round(nav.domContentLoadedEventEnd - nav.startTime) + ' мс';
-    }
-})();
-</script>

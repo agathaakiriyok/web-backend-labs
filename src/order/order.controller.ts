@@ -21,69 +21,64 @@ import type { Request } from 'express';
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  private isAdmin(req: Request): boolean {
-    return (req as any).session?.role === 'ADMIN';
+  private info(req: Request) {
+    return (req as any).authInfo ?? {};
   }
 
   @Get()
   @Render('orders/index')
   async findAll(@Req() req: Request) {
-    const s = (req as any).session;
-    const admin = this.isAdmin(req);
-    const orders = admin
+    const info = this.info(req);
+    const orders = info.isAdmin
       ? await this.orderService.findAll()
-      : await this.orderService.findByUser(s.userId);
+      : await this.orderService.findByUser(info.userId);
 
     return {
       orders,
-      isAuth: !!s?.userId,
-      username: s?.username,
-      isAdmin: admin,
+      isAuth: info.isAuth ?? false,
+      username: info.username,
+      isAdmin: info.isAdmin ?? false,
     };
   }
 
   @Get(':id')
   @Render('orders/show')
   async findOne(@Param('id') id: string, @Req() req: Request) {
-    const s = (req as any).session;
-    const admin = this.isAdmin(req);
+    const info = this.info(req);
     const order = await this.orderService.findOne(Number(id));
 
-    if (!order || (!admin && order.userId !== s.userId)) {
+    if (!order || (!info.isAdmin && order.userId !== info.userId)) {
       throw new ForbiddenException('Нет доступа к заказу');
     }
 
     return {
       order,
-      isAuth: !!s?.userId,
-      username: s?.username,
-      isAdmin: admin,
+      isAuth: info.isAuth ?? false,
+      username: info.username,
+      isAdmin: info.isAdmin ?? false,
     };
   }
 
   @Post()
   @Redirect('/orders')
   async create(@Body() body: any, @Req() req: Request) {
-    const s = (req as any).session;
-
+    const info = this.info(req);
     await this.orderService.create(
-      s.userId,
+      info.userId,
       Number(body.exhibitionId),
       Number(body.quantity) || 1,
       Number(body.unitPrice),
     );
-
     return { url: '/orders' };
   }
 
   @Post(':id/cancel')
   @Redirect('/orders')
   async cancel(@Param('id') id: string, @Req() req: Request) {
-    const s = (req as any).session;
-    const admin = this.isAdmin(req);
+    const info = this.info(req);
     const order = await this.orderService.findOne(Number(id));
 
-    if (!order || (!admin && order.userId !== s.userId)) {
+    if (!order || (!info.isAdmin && order.userId !== info.userId)) {
       throw new ForbiddenException('Нет доступа к заказу');
     }
 
@@ -94,11 +89,10 @@ export class OrderController {
   @Post(':id/delete')
   @Redirect('/orders')
   async remove(@Param('id') id: string, @Req() req: Request) {
-    const s = (req as any).session;
-    const admin = this.isAdmin(req);
+    const info = this.info(req);
     const order = await this.orderService.findOne(Number(id));
 
-    if (!order || (!admin && order.userId !== s.userId)) {
+    if (!order || (!info.isAdmin && order.userId !== info.userId)) {
       throw new ForbiddenException('Нет доступа к заказу');
     }
 

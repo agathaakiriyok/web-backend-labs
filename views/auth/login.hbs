@@ -11,13 +11,13 @@
       <h1>Вход</h1>
 
       {{#if error}}
-        <p class="auth-page__error">Неверное имя или пароль. Проверьте данные или <a href="/auth/register">зарегистрируйтесь</a>.</p>
+        <p class="auth-page__error">Неверный email или пароль. <a href="/auth/register">Зарегистрироваться?</a></p>
       {{/if}}
 
       <form class="tickets__form" method="POST" action="/auth/login">
         <label class="tickets__label">
-          Имя:
-          <input type="text" name="name" required autocomplete="username">
+          Email:
+          <input type="email" name="email" required autocomplete="email">
         </label>
         <label class="tickets__label">
           Пароль:

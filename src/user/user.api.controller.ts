@@ -15,7 +15,6 @@ import { UserResponseDto } from './dto/user-response.dto';
 import { FeedbackResponseDto } from '../feedback/dto/feedback-response.dto';
 import { OrderResponseDto } from '../order/dto/order-response.dto';
 import { AuthGuard } from '../auth/auth.guard';
-import { CacheControl } from '../common/decorators/cache-control.decorator';
 
 @ApiTags('users')
 @Controller('api/users')
@@ -23,26 +22,21 @@ export class UserApiController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  @CacheControl('private, max-age=60')
   @ApiOperation({ summary: 'Получить всех пользователей (с пагинацией)' })
   @ApiOkResponse({ type: [UserResponseDto], description: 'Список пользователей' })
-  async findAll(
-    @Query() pagination: PaginationDto,
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async findAll(@Query() pagination: PaginationDto, @Req() req: Request, @Res() res: Response) {
     const page = pagination.page ?? 1;
     const limit = pagination.limit ?? 10;
     const all = await this.userService.findAll();
     const total = all.length;
     const data = all.slice((page - 1) * limit, page * limit);
+
     res.setHeader('X-Total-Count', total);
     res.setHeader('Link', buildLinkHeader(req, page, limit, total, 3001));
-    return data;
+    return res.json(data);
   }
 
   @Get(':id')
-  @CacheControl('private, max-age=60')
   @ApiOperation({ summary: 'Получить пользователя по ID' })
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: UserResponseDto, description: 'Пользователь найден' })
@@ -54,17 +48,11 @@ export class UserApiController {
   }
 
   @Get(':id/feedbacks')
-  @CacheControl('private, max-age=60')
   @ApiOperation({ summary: 'Получить все отзывы пользователя' })
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: [FeedbackResponseDto], description: 'Список отзывов пользователя' })
   @ApiNotFoundResponse({ description: 'Пользователь не найден' })
-  async findFeedbacks(
-    @Param('id', ParseIntPipe) id: number,
-    @Query() pagination: PaginationDto,
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async findFeedbacks(@Param('id', ParseIntPipe) id: number, @Query() pagination: PaginationDto, @Req() req: Request, @Res() res: Response) {
     const user = await this.userService.findOne(id);
     if (!user) throw new NotFoundException(`Пользователь #${id} не найден`);
     const all = await this.userService.findFeedbacks(id);
@@ -73,21 +61,15 @@ export class UserApiController {
     const data = all.slice((page - 1) * limit, page * limit);
     res.setHeader('X-Total-Count', all.length);
     res.setHeader('Link', buildLinkHeader(req, page, limit, all.length, 3001));
-    return data;
+    return res.json(data);
   }
 
   @Get(':id/orders')
-  @CacheControl('private, max-age=60')
   @ApiOperation({ summary: 'Получить все заказы пользователя' })
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: [OrderResponseDto], description: 'Список заказов пользователя' })
   @ApiNotFoundResponse({ description: 'Пользователь не найден' })
-  async findOrders(
-    @Param('id', ParseIntPipe) id: number,
-    @Query() pagination: PaginationDto,
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async findOrders(@Param('id', ParseIntPipe) id: number, @Query() pagination: PaginationDto, @Req() req: Request, @Res() res: Response) {
     const user = await this.userService.findOne(id);
     if (!user) throw new NotFoundException(`Пользователь #${id} не найден`);
     const all = await this.userService.findOrders(id);
@@ -96,12 +78,12 @@ export class UserApiController {
     const data = all.slice((page - 1) * limit, page * limit);
     res.setHeader('X-Total-Count', all.length);
     res.setHeader('Link', buildLinkHeader(req, page, limit, all.length, 3001));
-    return data;
+    return res.json(data);
   }
 
   @Post()
   @UseGuards(AuthGuard)
-  @ApiCookieAuth('connect.sid')
+  @ApiCookieAuth('session')
   @ApiOperation({ summary: 'Создать пользователя' })
   @ApiBody({ type: CreateUserDto })
   @ApiResponse({ status: 201, type: UserResponseDto, description: 'Пользователь создан' })
@@ -114,7 +96,7 @@ export class UserApiController {
 
   @Patch(':id')
   @UseGuards(AuthGuard)
-  @ApiCookieAuth('connect.sid')
+  @ApiCookieAuth('session')
   @ApiOperation({ summary: 'Обновить пользователя' })
   @ApiParam({ name: 'id', type: Number })
   @ApiBody({ type: UpdateUserDto })
@@ -130,7 +112,7 @@ export class UserApiController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
-  @ApiCookieAuth('connect.sid')
+  @ApiCookieAuth('session')
   @ApiOperation({ summary: 'Удалить пользователя' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 204, description: 'Пользователь удалён' })

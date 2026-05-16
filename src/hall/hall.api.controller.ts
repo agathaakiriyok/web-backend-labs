@@ -14,7 +14,6 @@ import { UpdateHallDto } from './dto/update-hall.dto';
 import { HallResponseDto } from './dto/hall-response.dto';
 import { ExhibitionResponseDto } from '../exhibition/dto/exhibition-response.dto';
 import { AuthGuard } from '../auth/auth.guard';
-import { CacheControl } from '../common/decorators/cache-control.decorator';
 
 @ApiTags('halls')
 @Controller('api/halls')
@@ -22,14 +21,9 @@ export class HallApiController {
   constructor(private readonly hallService: HallService) {}
 
   @Get()
-  @CacheControl('public, max-age=3600, stale-while-revalidate=60')
   @ApiOperation({ summary: 'Получить все залы (с пагинацией)' })
   @ApiOkResponse({ type: [HallResponseDto], description: 'Список залов' })
-  async findAll(
-    @Query() pagination: PaginationDto,
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async findAll(@Query() pagination: PaginationDto, @Req() req: Request, @Res() res: Response) {
     const page = pagination.page ?? 1;
     const limit = pagination.limit ?? 10;
     const all = await this.hallService.findAll();
@@ -37,11 +31,10 @@ export class HallApiController {
     const data = all.slice((page - 1) * limit, page * limit);
     res.setHeader('X-Total-Count', total);
     res.setHeader('Link', buildLinkHeader(req, page, limit, total, 3001));
-    return data;
+    return res.json(data);
   }
 
   @Get(':id')
-  @CacheControl('public, max-age=3600, stale-while-revalidate=60')
   @ApiOperation({ summary: 'Получить зал по ID' })
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: HallResponseDto, description: 'Зал найден' })
@@ -53,17 +46,11 @@ export class HallApiController {
   }
 
   @Get(':id/exhibitions')
-  @CacheControl('public, max-age=3600, stale-while-revalidate=60')
   @ApiOperation({ summary: 'Получить все выставки в зале' })
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: [ExhibitionResponseDto], description: 'Список выставок зала' })
   @ApiNotFoundResponse({ description: 'Зал не найден' })
-  async findExhibitions(
-    @Param('id', ParseIntPipe) id: number,
-    @Query() pagination: PaginationDto,
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async findExhibitions(@Param('id', ParseIntPipe) id: number, @Query() pagination: PaginationDto, @Req() req: Request, @Res() res: Response) {
     const hall = await this.hallService.findOne(id);
     if (!hall) throw new NotFoundException(`Зал #${id} не найден`);
     const all = await this.hallService.findExhibitions(id);
@@ -72,12 +59,12 @@ export class HallApiController {
     const data = all.slice((page - 1) * limit, page * limit);
     res.setHeader('X-Total-Count', all.length);
     res.setHeader('Link', buildLinkHeader(req, page, limit, all.length, 3001));
-    return data;
+    return res.json(data);
   }
 
   @Post()
   @UseGuards(AuthGuard)
-  @ApiCookieAuth('connect.sid')
+  @ApiCookieAuth('session')
   @ApiOperation({ summary: 'Создать зал' })
   @ApiBody({ type: CreateHallDto })
   @ApiResponse({ status: 201, type: HallResponseDto, description: 'Зал создан' })
@@ -89,7 +76,7 @@ export class HallApiController {
 
   @Patch(':id')
   @UseGuards(AuthGuard)
-  @ApiCookieAuth('connect.sid')
+  @ApiCookieAuth('session')
   @ApiOperation({ summary: 'Обновить зал' })
   @ApiParam({ name: 'id', type: Number })
   @ApiBody({ type: UpdateHallDto })
@@ -105,7 +92,7 @@ export class HallApiController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(AuthGuard)
-  @ApiCookieAuth('connect.sid')
+  @ApiCookieAuth('session')
   @ApiOperation({ summary: 'Удалить зал' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 204, description: 'Зал удалён' })
