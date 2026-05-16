@@ -24,8 +24,12 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@apollo/server": "^5.5.0",
+    "@as-integrations/express5": "^1.1.2",
+    "@nestjs/apollo": "^13.2.5",
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
+    "@nestjs/graphql": "^13.2.5",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/swagger": "^11.3.2",
@@ -36,6 +40,8 @@
     "connect-pg-simple": "^10.0.0",
     "dotenv": "^17.3.1",
     "express-session": "^1.19.0",
+    "graphql": "^16.13.2",
+    "graphql-query-complexity": "^1.1.0",
     "hbs": "^4.2.0",
     "pg": "^8.20.0",
     "prisma": "^6.19.2",

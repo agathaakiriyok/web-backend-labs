@@ -6,6 +6,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { GraphQLError } from 'graphql';
 import type { Response, Request } from 'express';
 
 @Catch(Prisma.PrismaClientKnownRequestError)
@@ -13,10 +14,6 @@ export class PrismaExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(PrismaExceptionFilter.name);
 
   catch(exception: Prisma.PrismaClientKnownRequestError, host: ArgumentsHost) {
-    const ctx = host.switchToHttp();
-    const res = ctx.getResponse<Response>();
-    const req = ctx.getRequest<Request>();
-
     let status: number;
     let message: string;
 
@@ -43,16 +40,26 @@ export class PrismaExceptionFilter implements ExceptionFilter {
         this.logger.error(`Unhandled Prisma error: ${exception.code}`, exception.message);
     }
 
-    if (req.path.startsWith('/api/')) {
-      res.status(status).json({
-        statusCode: status,
-        message,
-        error: exception.code,
-        path: req.path,
-        timestamp: new Date().toISOString(),
-      });
+    if (host.getType() === 'http') {
+      const ctx = host.switchToHttp();
+      const res = ctx.getResponse<Response>();
+      const req = ctx.getRequest<Request>();
+
+      if (req.path.startsWith('/api/')) {
+        res.status(status).json({
+          statusCode: status,
+          message,
+          error: exception.code,
+          path: req.path,
+          timestamp: new Date().toISOString(),
+        });
+      } else {
+        res.status(status).redirect('/exhibitions');
+      }
     } else {
-      res.status(status).redirect('/exhibitions');
+      throw new GraphQLError(message, {
+        extensions: { code: exception.code },
+      });
     }
   }
 }
