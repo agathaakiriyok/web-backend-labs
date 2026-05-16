@@ -13,6 +13,7 @@ import { CreateFeedbackDto } from './dto/create-feedback.dto';
 import { UpdateFeedbackDto } from './dto/update-feedback.dto';
 import { FeedbackResponseDto } from './dto/feedback-response.dto';
 import { AuthGuard } from '../auth/auth.guard';
+import { CacheControl } from '../common/decorators/cache-control.decorator';
 
 @ApiTags('feedback')
 @Controller('api/feedback')
@@ -20,9 +21,14 @@ export class FeedbackApiController {
   constructor(private readonly feedbackService: FeedbackService) {}
 
   @Get()
+  @CacheControl('public, max-age=300, stale-while-revalidate=60')
   @ApiOperation({ summary: 'Получить все отзывы (с пагинацией)' })
   @ApiOkResponse({ type: [FeedbackResponseDto], description: 'Список отзывов' })
-  async findAll(@Query() pagination: PaginationDto, @Req() req: Request, @Res() res: Response) {
+  async findAll(
+    @Query() pagination: PaginationDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const page = pagination.page ?? 1;
     const limit = pagination.limit ?? 10;
     const all = await this.feedbackService.findAll();
@@ -30,10 +36,11 @@ export class FeedbackApiController {
     const data = all.slice((page - 1) * limit, page * limit);
     res.setHeader('X-Total-Count', total);
     res.setHeader('Link', buildLinkHeader(req, page, limit, total, 3001));
-    return res.json(data);
+    return data;
   }
 
   @Get(':id')
+  @CacheControl('public, max-age=300, stale-while-revalidate=60')
   @ApiOperation({ summary: 'Получить отзыв по ID' })
   @ApiParam({ name: 'id', type: Number })
   @ApiOkResponse({ type: FeedbackResponseDto, description: 'Отзыв найден' })

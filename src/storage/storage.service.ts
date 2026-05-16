@@ -13,6 +13,7 @@ export class StorageService {
       secretAccessKey: process.env.S3_SECRET_KEY ?? '',
     },
     forcePathStyle: false,
+    // Yandex S3 does not support AWS SDK v3 automatic checksums — disable them
     requestChecksumCalculation: 'WHEN_REQUIRED' as any,
     responseChecksumValidation: 'WHEN_REQUIRED' as any,
   });

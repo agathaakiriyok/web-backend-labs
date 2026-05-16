@@ -105,9 +105,9 @@ export class ExhibitionApiController {
   @Post(':id/image')
   @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
-  @ApiCookieAuth('session')
+  @ApiCookieAuth('connect.sid')
   @ApiConsumes('multipart/form-data')
-  @ApiOperation({ summary: 'Загрузить изображение выставки в Yandex Object Storage' })
+  @ApiOperation({ summary: 'Загрузить изображение выставки в объектное хранилище' })
   @ApiParam({ name: 'id', type: Number })
   @ApiBody({
     schema: {

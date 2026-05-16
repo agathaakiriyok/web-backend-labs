@@ -2,6 +2,7 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
 import type { App } from 'firebase-admin/app';
 import { AuthController } from './auth.controller';
+import { AuthApiController } from './auth.api.controller';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { AdminGuard } from './admin.guard';
@@ -32,7 +33,7 @@ export class AuthModule {
 
     return {
       module: AuthModule,
-      controllers: [AuthController],
+      controllers: [AuthController, AuthApiController],
       providers: [
         { provide: AUTH_MODULE_OPTIONS, useValue: options },
         { provide: FIREBASE_ADMIN, useValue: firebaseApp },

@@ -10,6 +10,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter';
 import { TimingInterceptor } from './common/interceptors/timing.interceptor';
 import { ETagInterceptor } from './common/interceptors/etag.interceptor';
+
 dotenv.config({ path: join(process.cwd(), '.env') });
 
 async function bootstrap() {

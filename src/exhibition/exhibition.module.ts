@@ -7,7 +7,9 @@ import { ExhibitionResolver } from './exhibition.resolver';
 import { AuthMiddleware } from '../auth/auth.middleware';
 
 @Module({
-  imports: [CacheModule.register({ ttl: 5000 })],
+  imports: [
+    CacheModule.register({ ttl: 5000 }),
+  ],
   controllers: [ExhibitionController, ExhibitionApiController],
   providers: [ExhibitionService, ExhibitionResolver],
   exports: [ExhibitionService],
