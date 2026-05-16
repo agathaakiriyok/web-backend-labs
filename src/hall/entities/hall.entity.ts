@@ -1,5 +1,1 @@
-export class Hall {
-  id: number;
-  name: string;
-  capacity: number;
-}
+export { Hall, Exhibition, OrderItem } from '../../shared/entities';

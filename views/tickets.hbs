@@ -14,28 +14,78 @@
         <section class="tickets">
             <div class="wrapper">
                 <h1>Покупка билетов</h1>
-                <form class="tickets__form">
-                    <label class="tickets__label">
-                        Ваше имя:
-                        <input type="text" placeholder="Введите имя">
+
+                {{#if error}}
+                <p class="auth-page__error">{{error}}</p>
+                {{/if}}
+
+                {{#if exhibition}}
+                <div class="tickets__card">
+                    <div class="exhibition__image">
+                        <img src="/img/{{exhibition.id}}.jpg" alt="{{exhibition.name}}">
+                    </div>
+                    <div class="tickets__details">
+                        <h2>{{exhibition.name}}</h2>
+                        <p>{{exhibition.description}}</p>
+                        <p><strong>Период:</strong> {{exhibition.dateStart}} — {{exhibition.dateEnd}}</p>
+                        <p><strong>Зал:</strong> {{exhibition.hall.name}}</p>
+                    </div>
+                </div>
+
+                {{#if isAuth}}
+                <form class="tickets__form" action="/tickets" method="POST">
+                    <input type="hidden" name="exhibitionId" value="{{exhibition.id}}">
+                    <label class="tickets__label">Количество билетов:
+                        <input type="number" name="quantity" min="1" value="1" required>
                     </label>
-                    <label class="tickets__label">
-                        Email:
-                        <input type="email" placeholder="example@mail.com">
+                    <label class="tickets__label">Цена за билет (₽):
+                        <input type="number" name="unitPrice" value="500" min="1" step="1" required>
                     </label>
-                    <label class="tickets__label">
-                        Тип билета:
-                        <select>
-                            <option>Стандартный</option>
-                            <option>Льготный</option>
-                            <option>Экскурсионный</option>
-                        </select>
-                    </label>
-                    <button class="tickets__btn">Оформить</button>
+                    <button class="tickets__btn" type="submit">Оформить билет</button>
                 </form>
+                {{else}}
+                <p style="text-align:center;margin-top:20px">
+                    <a href="/auth/login">Войдите</a>, чтобы купить билет.
+                </p>
+                {{/if}}
+
+                {{else}}
+                <p style="text-align:center;margin-top:20px">
+                    Выберите выставку на странице <a href="/exhibitions">Выставки</a>, чтобы оформить билет.
+                </p>
+                {{/if}}
+
+                {{#if isAuth}}
+                <section class="tickets__orders">
+                    <h2>Мои билеты</h2>
+                    {{#if userOrders.length}}
+                    <ul class="tickets__orders-list">
+                        {{#each userOrders}}
+                        <li class="tickets__order-item">
+                            <div class="tickets__order-header">
+                                <span><strong>Заказ №{{id}}</strong></span>
+                                <span class="tickets__status tickets__status--{{status}}">{{status}}</span>
+                                <span>{{totalPrice}} ₽</span>
+                                <form action="/orders/{{id}}/delete" method="POST" style="display:inline">
+                                    <button class="nav__btn nav__btn--danger tickets__delete-btn">Удалить</button>
+                                </form>
+                            </div>
+                            <ul class="tickets__items">
+                                {{#each items}}
+                                <li>{{exhibition.name}} — {{quantity}} шт. × {{unitPrice}} ₽</li>
+                                {{/each}}
+                            </ul>
+                        </li>
+                        {{/each}}
+                    </ul>
+                    {{else}}
+                    <p>У вас пока нет купленных билетов.</p>
+                    {{/if}}
+                </section>
+                {{/if}}
+
             </div>
         </section>
-
     </main>
     {{> footer}}
 

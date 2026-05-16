@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>{{> head}}<title>Редактировать отзыв</title></head>
+<body>
+{{> header}}
+<main class="main">
+  <section class="feedback">
+    <div class="wrapper">
+      <h2 class="feedback__title">Редактировать отзыв</h2>
+      <form class="feedback__form" action="/feedback/{{feedback.id}}/update" method="POST">
+        <label class="contacts__label">Отзыв:
+          <textarea name="message" required minlength="5">{{feedback.text}}</textarea>
+        </label>
+        <button type="submit" class="contacts__btn">Сохранить</button>
+      </form>
+      <p style="text-align:center;margin-top:16px"><a href="/feedback">← Назад к отзывам</a></p>
+    </div>
+  </section>
+</main>
+{{> footer}}
+</body>
+</html>

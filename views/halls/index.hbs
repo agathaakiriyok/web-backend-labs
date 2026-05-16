@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>{{> head}}<title>Залы</title></head>
+<body>
+{{> header}}
+<main class="main">
+  <section class="tickets">
+    <div class="wrapper">
+      <h1>Залы музея</h1>
+      {{#if isAdmin}}
+      <div style="text-align:center;margin-bottom:20px">
+        <a href="/halls/add"><button class="nav__btn">+ Добавить зал</button></a>
+      </div>
+      {{/if}}
+      <ul class="exhibitions-page__list">
+        {{#each halls}}
+        <li class="exhibitions-page__item">
+          <div class="exhibition__content">
+            <h3 class="exhibitions-page__name">{{name}}</h3>
+            <p>Вместимость: {{capacity}}</p>
+            {{#if ../isAdmin}}
+            <div class="crud-actions">
+              <a href="/halls/{{id}}/edit"><button class="nav__btn">Редактировать</button></a>
+              <form action="/halls/{{id}}/delete" method="POST" style="display:inline">
+                <button class="nav__btn nav__btn--danger">Удалить</button>
+              </form>
+            </div>
+            {{/if}}
+          </div>
+        </li>
+        {{/each}}
+      </ul>
+    </div>
+  </section>
+</main>
+{{> footer}}
+</body>
+</html>

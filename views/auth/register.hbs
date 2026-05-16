@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  {{> head}}
+  <title>Регистрация — Эрмитаж</title>
+</head>
+<body>
+  {{> header}}
+  <main class="main">
+    <div class="auth-page">
+      <h1>Регистрация</h1>
+
+      {{#if error}}
+        <p class="auth-page__error">{{error}}</p>
+      {{/if}}
+
+      <form class="tickets__form" method="POST" action="/auth/register">
+        <label class="tickets__label">
+          Имя:
+          <input type="text" name="name" required autocomplete="name">
+        </label>
+        <label class="tickets__label">
+          Email:
+          <input type="email" name="email" required autocomplete="email">
+        </label>
+        <label class="tickets__label">
+          Пароль:
+          <input type="password" name="password" required minlength="4" autocomplete="new-password">
+        </label>
+        <button type="submit" class="tickets__btn">Зарегистрироваться</button>
+      </form>
+
+      <p class="auth-page__link">Уже есть аккаунт? <a href="/auth/login">Войти</a></p>
+    </div>
+  </main>
+  {{> footer}}
+</body>
+</html>

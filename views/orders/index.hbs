@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>{{> head}}<title>Мои заказы</title></head>
+<body>
+  {{> header}}
+  <main class="main">
+    <div class="wrapper">
+      {{#if isAdmin}}
+        <h1>Заказы пользователей</h1>
+      {{else}}
+        <h1>Мои заказы</h1>
+      {{/if}}
+      {{#if orders.length}}
+        <ul>
+          {{#each orders}}
+          <li>
+            <a href="/orders/{{id}}">
+              Заказ №{{id}} — {{status}} — {{totalPrice}} ₽
+            </a>
+            — {{createdAt}}
+            {{#if isAdmin}}
+              — покупатель: {{user.name}}
+            {{/if}}
+            {{#if (eq status "PENDING")}}
+              <form method="POST" action="/orders/{{id}}/cancel" style="display:inline">
+                <button type="submit">Отменить</button>
+              </form>
+            {{/if}}
+          </li>
+          {{/each}}
+        </ul>
+      {{else}}
+        {{#if isAdmin}}
+          <p>Пока нет заказов.</p>
+        {{else}}
+          <p>У вас пока нет заказов. <a href="/exhibitions">Посмотреть выставки</a></p>
+        {{/if}}
+      {{/if}}
+    </div>
+  </main>
+  {{> footer}}
+</body>
+</html>

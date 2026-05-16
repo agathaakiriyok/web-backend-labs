@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>{{> head}}<title>Заказ №{{order.id}}</title></head>
+<body>
+  {{> header}}
+  <main class="main">
+    <div class="wrapper">
+      <h1>Заказ №{{order.id}}</h1>
+      <p>Статус: <strong>{{order.status}}</strong></p>
+      <p>Сумма: {{order.totalPrice}} ₽</p>
+      {{#if isAdmin}}
+        <p>Покупатель: {{order.user.name}}</p>
+      {{/if}}
+      <h2>Элементы заказа</h2>
+      <ul>
+        {{#each order.items}}
+        <li>{{exhibition.name}} ({{hall.name}}) — {{quantity}} шт. — {{unitPrice}} ₽ за шт.</li>
+        {{/each}}
+      </ul>
+      {{#if (eq order.status "PENDING")}}
+        <p>Ожидает оплаты</p>
+      {{/if}}
+      <a href="/orders">← Назад к заказам</a>
+    </div>
+  </main>
+  {{> footer}}
+</body>
+</html>

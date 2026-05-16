@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
-import { PrismaService } from '../prisma.service';
+import { HallService } from './hall.service';
+import { HallController } from './hall.controller';
 
 @Module({
-  providers: [PrismaService],
-  exports: [PrismaService],
+  controllers: [HallController],
+  providers: [HallService],
 })
 export class HallModule {}

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>{{> head}}<title>Купить билет</title></head>
+<body>
+{{> header}}
+<main class="main">
+  <section class="tickets">
+    <div class="wrapper">
+      <h1>Покупка билета</h1>
+      <form class="tickets__form" action="/orders" method="POST">
+        <label class="tickets__label">Тип:
+          <select name="type">
+            <option>Стандартный</option>
+            <option>Льготный</option>
+            <option>Экскурсионный</option>
+          </select>
+        </label>
+        <label class="tickets__label">Цена: <input type="number" name="price" value="500" required></label>
+        <label class="tickets__label">ID выставки: <input type="number" name="exhibitionId" required></label>
+        <button class="tickets__btn">Оформить</button>
+      </form>
+    </div>
+  </section>
+</main>
+{{> footer}}
+</body>
+</html>

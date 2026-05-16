@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>{{> head}}<title>{{exhibition.name}}</title></head>
+<body>
+{{> header}}
+<main class="main">
+  <section class="tickets">
+    <div class="wrapper">
+      <h1>{{exhibition.name}}</h1>
+      <p>{{exhibition.description}}</p>
+      <p><strong>Зал:</strong> {{exhibition.hall.name}}</p>
+      {{#if canBuy}}
+        <form method="POST" action="/orders" style="margin-top: 20px">
+          <input type="hidden" name="exhibitionId" value="{{exhibition.id}}">
+          <label class="tickets__label">Количество: <input type="number" name="quantity" value="1" min="1" required></label>
+          <label class="tickets__label">Цена за единицу: <input type="number" name="unitPrice" value="500" step="0.01" required></label>
+          <button class="tickets__btn" type="submit">Купить билет</button>
+        </form>
+      {{else}}
+        {{#if isAuth}}
+          <p>Вы администратор и не можете покупать билеты.</p>
+        {{else}}
+          <p><a href="/auth/login">Войдите</a>, чтобы купить билет.</p>
+        {{/if}}
+      {{/if}}
+      <a href="/exhibitions"><button class="nav__btn">Назад</button></a>
+    </div>
+  </section>
+</main>
+{{> footer}}
+</body>
+</html>

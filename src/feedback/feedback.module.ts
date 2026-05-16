@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
-import { PrismaService } from '../prisma.service';
+import { FeedbackController } from './feedback.controller';
+import { FeedbackService } from './feedback.service';
 
 @Module({
-  providers: [PrismaService],
-  exports: [PrismaService],
+  controllers: [FeedbackController],
+  providers: [FeedbackService],
 })
 export class FeedbackModule {}

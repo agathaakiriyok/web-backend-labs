@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>{{> head}}<title>Билеты</title></head>
+<body>
+{{> header}}
+<main class="main">
+  <section class="tickets">
+    <div class="wrapper">
+      <h1>Билеты</h1>
+      <a href="/tickets/add"><button class="nav__btn">+ Купить билет</button></a>
+      <ul class="exhibitions-page__list" style="margin-top:20px">
+        {{#each tickets}}
+        <li class="exhibitions-page__item">
+          <div class="exhibition__content">
+            <h3 class="exhibitions-page__name">{{type}}</h3>
+            <p>Цена: {{price}} ₽</p>
+            <p>Выставка: {{exhibition.name}}</p>
+            <form action="/tickets/{{id}}/delete" method="POST" style="display:inline">
+              <button class="nav__btn" style="background:#993c1d">Удалить</button>
+            </form>
+          </div>
+        </li>
+        {{/each}}
+      </ul>
+    </div>
+  </section>
+</main>
+{{> footer}}
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>{{> head}}<title>Добавить пользователя</title></head>
+<body>
+{{> header}}
+<main class="main">
+  <section class="tickets">
+    <div class="wrapper">
+      <h1>Новый пользователь</h1>
+      <form class="tickets__form" action="/users" method="POST">
+        <label class="tickets__label">Имя: <input type="text" name="name" required></label>
+        <label class="tickets__label">Email: <input type="email" name="email" required></label>
+        <label class="tickets__label">Пароль: <input type="password" name="password" required></label>
+        <button class="tickets__btn">Сохранить</button>
+      </form>
+    </div>
+  </section>
+</main>
+{{> footer}}
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    {{> head}}
+    <title>Все выставки — Эрмитаж</title>
+</head>
+
+<body>
+
+    {{> header}}
+
+    <main class="main">
+        <section class="exhibitions-page">
+            <div class="wrapper">
+                <h1 class="exhibitions-page__title">Выставки</h1>
+                {{#if isAdmin}}
+                <div class="crud-actions crud-actions--center">
+                    <a href="/exhibitions/add"><button class="nav__btn">+ Добавить выставку</button></a>
+                </div>
+                {{/if}}
+                <ul class="exhibitions-page__list">
+                    {{#each exhibitions}}
+                    <li class="exhibitions-page__item">
+                        <div class="exhibition__image">
+                            <img src="{{image}}" alt="{{name}}">
+                        </div>
+                        <div class="exhibition__content">
+                            <h3 class="exhibitions-page__name">{{name}}</h3>
+                            <p class="exhibitions-page__description">{{description}}</p>
+                            <p class="exhibitions-page__date">{{dateStart}} — {{dateEnd}}</p>
+                            {{#if ../canBuy}}
+                            <a href="/tickets?exhibitionId={{id}}" class="exhibitions__btn">Купить билет</a>
+                            {{else}}
+                            {{#unless ../isAuth}}
+                            <a href="/auth/login" class="exhibitions__btn">Войти для покупки</a>
+                            {{/unless}}
+                            {{/if}}
+                            {{#if ../isAdmin}}
+                            <div class="crud-actions" style="margin-top:10px">
+                                <a href="/exhibitions/{{id}}/edit"><button class="nav__btn">Редактировать</button></a>
+                                <form action="/exhibitions/{{id}}/delete" method="POST" style="display:inline">
+                                    <button class="nav__btn nav__btn--danger">Удалить</button>
+                                </form>
+                            </div>
+                            {{/if}}
+                        </div>
+                    </li>
+                    {{/each}}
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    {{> footer}}
+
+</body>
+</html>

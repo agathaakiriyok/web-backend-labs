@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>{{> head}}<title>Пользователи</title></head>
+<body>
+{{> header}}
+<main class="main">
+  <section class="tickets">
+    <div class="wrapper">
+      <h1>Пользователи</h1>
+      {{#if isAuth}}
+      <a href="/users/add"><button class="nav__btn">+ Добавить</button></a>
+      {{/if}}
+      <ul class="exhibitions-page__list" style="margin-top:20px">
+        {{#each users}}
+        <li class="exhibitions-page__item">
+          <div class="exhibition__content">
+            <h3 class="exhibitions-page__name">{{name}}</h3>
+            <p>{{email}}</p>
+            <div class="crud-actions">
+              <a href="/users/{{id}}/edit"><button class="nav__btn">Редактировать</button></a>
+              <form action="/users/{{id}}/delete" method="POST" style="display:inline">
+                <button class="nav__btn nav__btn--danger">Удалить</button>
+              </form>
+            </div>
+          </div>
+        </li>
+        {{/each}}
+      </ul>
+    </div>
+  </section>
+</main>
+{{> footer}}
+</body>
+</html>

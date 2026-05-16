@@ -1,18 +1,25 @@
 <header class="header">
-    <div class="wrapper header__wrapper">
-        <div class="logo">
-            <img src="/img/logo.png" alt="Логотип Эрмитажа">
-        </div>
-        <nav class="nav">
-            {{> nav}}
-        </nav>
-        <div>
-            {{#if isAuth}}
-                <p>Вы вошли как <strong>{{username}}</strong></p>
-                <a href="?auth=false"><button class="nav__btn">Выйти</button></a>
-            {{else}}
-                <a href="?auth=true"><button class="nav__btn">Войти</button></a>
-            {{/if}}
-        </div>
-    </div>
+  <div class="wrapper header__wrapper">
+    <a class="logo" href="/">Эрмитаж</a>
+    <nav class="nav">
+      <ul class="nav__list">
+        <li class="nav__item"><a class="nav__link" href="/">Главная</a></li>
+        <li class="nav__item"><a class="nav__link" href="/exhibitions">Выставки</a></li>
+        <li class="nav__item"><a class="nav__link" href="/halls">Залы</a></li>
+        <li class="nav__item"><a class="nav__link" href="/tickets">Билеты</a></li>
+        <li class="nav__item"><a class="nav__link" href="/feedback">Отзывы</a></li>
+        {{#if isAuth}}
+          <li class="nav__item header__user">Привет, {{username}}{{#if isAdmin}} (админ){{/if}}</li>
+          <li class="nav__item">
+            <form method="POST" action="/auth/logout">
+              <button class="nav__btn" type="submit">Выйти</button>
+            </form>
+          </li>
+        {{else}}
+          <li class="nav__item"><a class="nav__btn" href="/auth/login">Войти</a></li>
+          <li class="nav__item"><a class="nav__btn" href="/auth/register">Регистрация</a></li>
+        {{/if}}
+      </ul>
+    </nav>
+  </div>
 </header>

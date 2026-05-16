@@ -1,46 +1,47 @@
 <!DOCTYPE html>
 <html lang="ru">
-
-<head>
-    {{> head}}
-    <title>Отзывы посетителей</title>
-</head>
-
+<head>{{> head}}<title>Отзывы посетителей</title></head>
 <body>
+<input type="hidden" id="current-user-id" value="{{userId}}">
+<input type="hidden" id="is-admin" value="{{isAdmin}}">
+{{> header}}
+<main class="main">
+  <section class="feedback">
+    <div class="wrapper">
+      <h2 class="feedback__title">Отзывы посетителей</h2>
 
-    {{> header}}
+      {{#if isAuth}}
+      <form class="feedback__form" action="/feedback" method="POST">
+        <label class="contacts__label">Отзыв:
+          <textarea name="message" required minlength="5"></textarea>
+        </label>
+        <button type="submit" class="contacts__btn">Добавить отзыв</button>
+      </form>
+      {{else}}
+      <p><a href="/auth/login">Войдите</a>, чтобы оставить отзыв.</p>
+      {{/if}}
 
-    <main class="main">
-        <section class="feedback">
-            <div class="wrapper">
-                <h2 class="feedback__title">Отзывы посетителей</h2>
-                <form class="feedback__form" id="feedbackForm">
-                    <label class="contacts__label">Имя:
-                        <input type="text" name="name" id="name" required minlength="2">
-                    </label>
-                    <label class="contacts__label">Email:
-                        <input type="email" name="email" id="email" required>
-                    </label>
-                    <label class="contacts__label">Отзыв:
-                        <textarea name="message" id="message" required minlength="5"></textarea>
-                    </label>
-                    <button type="submit" class="contacts__btn">Добавить отзыв</button>
-                </form>
-                <template id="feedbackTemplate">
-                    <div class="feedback__item">
-                        <p class="feedback__name"></p>
-                        <p class="feedback__email"></p>
-                        <p class="feedback__text"></p>
-                        <button class="feedback__edit-btn">Редактировать</button>
-                    </div>
-                </template>
-                <div id="feedbackList" class="feedback__list"></div>
-            </div>
-        </section>
-    </main>
-
-    {{> footer}}
-
+      <div class="feedback__list">
+        {{#each feedbacks}}
+        <div class="feedback__item" data-feedback-id="{{id}}">
+          <p class="feedback__text">{{text}}</p>
+          <p class="feedback__author">{{user.name}} — {{createdAt}}</p>
+          <div class="feedback__actions">
+            {{#if canEdit}}
+            <a href="/feedback/{{id}}/edit" class="feedback__edit-btn">Редактировать</a>
+            {{/if}}
+            {{#if canDelete}}
+            <form action="/feedback/{{id}}/delete" method="POST" style="display:inline">
+              <button class="feedback__edit-btn feedback__edit-btn--danger">Удалить</button>
+            </form>
+            {{/if}}
+          </div>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+  </section>
+</main>
+{{> footer}}
 </body>
-
 </html>

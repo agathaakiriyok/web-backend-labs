@@ -1,21 +1,22 @@
-import { Controller, Get, Query, Render } from '@nestjs/common';
+import { Controller, Get, Render, Req } from '@nestjs/common';
+import type { Request } from 'express';
 
 @Controller()
 export class AppController {
-
-  private getSession(auth?: string) {
-    const isAuth = auth === 'true';
+  private session(req: Request) {
+    const s = (req as any).session;
     return {
-      isAuth,
-      username: isAuth ? 'Агата' : null,
+      isAuth: !!s?.userId,
+      username: s?.username,
+      isAdmin: s?.username === 'Агата',
     };
   }
 
   @Get()
   @Render('index')
-  getIndex(@Query('auth') auth?: string) {
+  getIndex(@Req() req: Request) {
     return {
-      ...this.getSession(auth),
+      ...this.session(req),
       exhibitions: [
         { name: 'Искусство портрета', date: '10 ноября – 20 декабря' },
         { name: '14 декабря 1825 года', date: '10 ноября – 20 декабря' },
@@ -26,25 +27,13 @@ export class AppController {
 
   @Get('about')
   @Render('about')
-  getAbout(@Query('auth') auth?: string) {
-    return this.getSession(auth);
-  }
-
-  @Get('tickets')
-  @Render('tickets')
-  getTickets(@Query('auth') auth?: string) {
-    return this.getSession(auth);
-  }
-
-  @Get('feedback')
-  @Render('feedback')
-  getFeedback(@Query('auth') auth?: string) {
-    return this.getSession(auth);
+  getAbout(@Req() req: Request) {
+    return this.session(req);
   }
 
   @Get('all-exhibitions')
   @Render('all-exhibitions')
-  getAllExhibitions(@Query('auth') auth?: string) {
-    return this.getSession(auth);
+  getAllExhibitions(@Req() req: Request) {
+    return this.session(req);
   }
 }

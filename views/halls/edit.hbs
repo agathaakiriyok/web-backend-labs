@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>{{> head}}<title>Редактировать зал</title></head>
+<body>
+{{> header}}
+<main class="main">
+  <section class="tickets">
+    <div class="wrapper">
+      <h1>Редактировать зал</h1>
+      <form class="tickets__form" action="/halls/{{hall.id}}/update" method="POST">
+        <label class="tickets__label">Название:
+          <input type="text" name="name" value="{{hall.name}}" required>
+        </label>
+        <label class="tickets__label">Вместимость:
+          <input type="number" name="capacity" value="{{hall.capacity}}" required>
+        </label>
+        <button class="tickets__btn">Сохранить</button>
+      </form>
+      <p style="text-align:center;margin-top:16px"><a href="/halls">← Назад к залам</a></p>
+    </div>
+  </section>
+</main>
+{{> footer}}
+</body>
+</html>

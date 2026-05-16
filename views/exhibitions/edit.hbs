@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>{{> head}}<title>Редактировать выставку</title></head>
+<body>
+{{> header}}
+<main class="main">
+  <section class="tickets">
+    <div class="wrapper">
+      <h1>Редактировать выставку</h1>
+      <form class="tickets__form" action="/exhibitions/{{exhibition.id}}/update" method="POST">
+        <label class="tickets__label">Название:
+          <input type="text" name="name" value="{{exhibition.name}}" required>
+        </label>
+        <label class="tickets__label">Описание:
+          <textarea name="description" required>{{exhibition.description}}</textarea>
+        </label>
+        <label class="tickets__label">Дата начала:
+          <input type="date" name="dateStart" value="{{exhibition.dateStartInput}}" required>
+        </label>
+        <label class="tickets__label">Дата конца:
+          <input type="date" name="dateEnd" value="{{exhibition.dateEndInput}}" required>
+        </label>
+        <label class="tickets__label">Зал:
+          <select name="hallId" required>
+            {{#each halls}}
+            <option value="{{id}}" {{#if (eq id ../exhibition.hallId)}}selected{{/if}}>{{name}} (ID: {{id}})</option>
+            {{/each}}
+          </select>
+        </label>
+        <button class="tickets__btn">Сохранить</button>
+      </form>
+      <p style="text-align:center;margin-top:16px"><a href="/exhibitions">← Назад к выставкам</a></p>
+    </div>
+  </section>
+</main>
+{{> footer}}
+</body>
+</html>

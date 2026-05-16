@@ -1,52 +1,107 @@
-const form = document.getElementById("feedbackForm");
-const list = document.getElementById("feedbackList");
-const template = document.getElementById("feedbackTemplate");
+if (window.location.pathname === '/feedback') {
+  const currentUserId = Number(document.getElementById('current-user-id')?.value) || null;
+  const isAdmin = document.getElementById('is-admin')?.value === 'true';
 
-let feedbacks = JSON.parse(localStorage.getItem("feedbacks") || "[]");
+  /* ── SSE ─────────────────────────────────────────────── */
+  const source = new EventSource('/feedback/events');
 
-function render() {
-    list.innerHTML = "";
+  const showToast = (message) => {
+    const existing = document.querySelector('.feedback-toast');
+    if (existing) existing.remove();
 
-    feedbacks.forEach((item, index) => {
-        const node = template.content.cloneNode(true);
+    const toast = document.createElement('div');
+    toast.className = 'feedback-toast';
+    toast.textContent = message;
+    document.body.appendChild(toast);
 
-        node.querySelector(".feedback__name").textContent = item.name;
-        node.querySelector(".feedback__email").textContent = item.email;
-        node.querySelector(".feedback__text").textContent = item.message;
+    requestAnimationFrame(() => toast.classList.add('feedback-toast--visible'));
+    setTimeout(() => {
+      toast.classList.remove('feedback-toast--visible');
+      setTimeout(() => toast.remove(), 250);
+    }, 3500);
+  };
 
-        node.querySelector(".feedback__edit-btn").addEventListener("click", () => editItem(index));
+  const esc = (text) => {
+    const d = document.createElement('div');
+    d.appendChild(document.createTextNode(String(text)));
+    return d.innerHTML;
+  };
 
-        list.appendChild(node);
+  const fmtDate = (dateStr) =>
+    new Date(dateStr).toLocaleString('ru-RU', {
+      day: '2-digit', month: '2-digit', year: 'numeric',
+      hour: '2-digit', minute: '2-digit',
     });
-}
 
-render();
+  source.onmessage = (event) => {
+    try {
+      const data = JSON.parse(event.data);
 
-form.addEventListener("submit", (e) => {
+      if (data.type === 'create') {
+        const fb = data.feedback;
+        const canEdit = currentUserId && currentUserId === fb.userId;
+        const canDelete = isAdmin || canEdit;
+
+        const div = document.createElement('div');
+        div.className = 'feedback__item';
+        div.dataset.feedbackId = fb.id;
+        div.innerHTML = `
+          <p class="feedback__text">${esc(fb.text)}</p>
+          <p class="feedback__author">${esc(fb.userName)} — ${fmtDate(fb.createdAt)}</p>
+          <div class="feedback__actions">
+            ${canEdit ? `<a href="/feedback/${fb.id}/edit" class="feedback__edit-btn">Редактировать</a>` : ''}
+            ${canDelete ? `<form action="/feedback/${fb.id}/delete" method="POST" style="display:inline">
+              <button class="feedback__edit-btn feedback__edit-btn--danger">Удалить</button>
+            </form>` : ''}
+          </div>`;
+
+        document.querySelector('.feedback__list').prepend(div);
+        showToast(`Новый отзыв от ${fb.userName}`);
+
+      } else if (data.type === 'update') {
+        const item = document.querySelector(`[data-feedback-id="${data.feedback.id}"]`);
+        if (item) {
+          const el = item.querySelector('.feedback__text');
+          if (el) el.textContent = data.feedback.text;
+        }
+        showToast('Отзыв обновлён');
+
+      } else if (data.type === 'delete') {
+        const item = document.querySelector(`[data-feedback-id="${data.id}"]`);
+        if (item) item.remove();
+        showToast('Отзыв удалён');
+      }
+    } catch (_) {}
+  };
+
+  /* ── AJAX create (no page reload) ───────────────────── */
+  const addForm = document.querySelector('.feedback__form');
+  if (addForm) {
+    addForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const textarea = addForm.querySelector('textarea');
+      const text = textarea.value.trim();
+      if (!text) return;
+
+      const btn = addForm.querySelector('button[type="submit"]');
+      btn.disabled = true;
+
+      await fetch('/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ message: text }),
+      });
+
+      textarea.value = '';
+      btn.disabled = false;
+    });
+  }
+
+  /* ── AJAX delete via event delegation (no page reload) ─ */
+  document.querySelector('.feedback__list').addEventListener('submit', async (e) => {
+    const form = e.target.closest('form');
+    if (!form || !form.action.includes('/delete')) return;
     e.preventDefault();
-
-    const name = form.name.value.trim();
-    const email = form.email.value.trim();
-    const message = form.message.value.trim();
-
-    if (name.length < 2) return alert("Имя слишком короткое");
-    if (message.length < 5) return alert("Отзыв слишком короткий");
-
-    feedbacks.push({ name, email, message });
-    localStorage.setItem("feedbacks", JSON.stringify(feedbacks));
-
-    render();
-    form.reset();
-});
-
-function editItem(index) {
-    const newText = prompt("Измените текст отзыва:", feedbacks[index].message);
-
-    if (newText && newText.trim().length >= 5) {
-        feedbacks[index].message = newText.trim();
-        localStorage.setItem("feedbacks", JSON.stringify(feedbacks));
-        render();
-    } else {
-        alert("Минимум 5 символов");
-    }
+    await fetch(form.action, { method: 'POST' });
+  });
 }
