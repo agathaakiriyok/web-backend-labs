@@ -1,4 +1,18 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateOrderDto } from './create-order.dto';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEnum } from 'class-validator';
 
-export class UpdateOrderDto extends PartialType(CreateOrderDto) {}
+export enum OrderStatusEnum {
+  PENDING = 'PENDING',
+  PAID = 'PAID',
+  CANCELLED = 'CANCELLED',
+}
+
+export class UpdateOrderDto {
+  @ApiProperty({
+    enum: OrderStatusEnum,
+    example: OrderStatusEnum.PAID,
+    description: 'Новый статус заказа',
+  })
+  @IsEnum(OrderStatusEnum)
+  status: OrderStatusEnum;
+}

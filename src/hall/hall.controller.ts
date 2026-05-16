@@ -1,3 +1,4 @@
+import { ApiExcludeController } from '@nestjs/swagger';
 import {
   Controller,
   Get,
@@ -14,6 +15,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { AdminGuard } from '../auth/admin.guard';
 import type { Request } from 'express';
 
+@ApiExcludeController()
 @Controller('halls')
 export class HallController {
   constructor(private readonly hallService: HallService) {}

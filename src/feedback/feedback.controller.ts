@@ -1,3 +1,4 @@
+import { ApiExcludeController } from '@nestjs/swagger';
 import {
   Controller,
   Get,
@@ -19,6 +20,7 @@ import { map } from 'rxjs/operators';
 
 const feedbackEvents = new Subject<string>();
 
+@ApiExcludeController()
 @Controller('feedback')
 export class FeedbackController {
   constructor(private readonly feedbackService: FeedbackService) {}

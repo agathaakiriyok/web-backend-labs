@@ -1,3 +1,4 @@
+import { ApiExcludeController } from '@nestjs/swagger';
 import {
   Controller,
   Get,
@@ -14,6 +15,7 @@ import { OrderService } from './order.service';
 import { AuthGuard } from '../auth/auth.guard';
 import type { Request } from 'express';
 
+@ApiExcludeController()
 @Controller('orders')
 @UseGuards(AuthGuard)
 export class OrderController {

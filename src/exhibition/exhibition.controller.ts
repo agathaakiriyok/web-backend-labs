@@ -1,3 +1,4 @@
+import { ApiExcludeController } from '@nestjs/swagger';
 import {
   Controller,
   Get,
@@ -21,6 +22,7 @@ import { AdminGuard } from '../auth/admin.guard';
 
 const exhibitionEvents = new Subject<string>();
 
+@ApiExcludeController()
 @Controller('exhibitions')
 export class ExhibitionController {
   constructor(
